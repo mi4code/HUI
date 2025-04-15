@@ -16,6 +16,7 @@ jobs:
         run: |
           chmod +x ./build_linux_gtk3.sh
           sudo apt update
+          ls
           ./build_linux_gtk3.sh --dependencies --deploy --tests
 
       - name: Upload build artifacts

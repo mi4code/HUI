@@ -56,7 +56,7 @@ else:
     print("unsupported os, sorry")
 
 
-input()
+
 
 """
 OLD NOTES:

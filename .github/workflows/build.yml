@@ -18,6 +18,10 @@ jobs:
           sudo apt update
           ls
           ./build_linux_gtk3.sh --dependencies --deploy --tests
+      - name: chk
+        run: |
+          ls
+          ls -R
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

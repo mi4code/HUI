@@ -12,14 +12,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Make build script executable
-        run: chmod +x ./build_linux_gtk3.sh
-
-      - name: Install dependencies and build
-        run: ./build_linux_gtk3.sh --dependencies --deploy --tests
-
-      - name: Archive build artifacts
+      - name: Run script
         run: |
+          chmod +x ./build_linux_gtk3.sh
+          sudo apt update
+          ./build_linux_gtk3.sh --dependencies --deploy --tests
           BUILD_DIR=$(ls -d HUI-linux-*)
           tar -czvf $BUILD_DIR.tar.gz $BUILD_DIR
 

@@ -46,6 +46,7 @@ jobs:
         run: |
           choco install 7zip -y
           ./build_win_cef.bat --dependencies --deploy --tests
+          cd HUI-win-AMD64-blink-cef
           python ../build_python.py
 
       - name: Upload build artifacts

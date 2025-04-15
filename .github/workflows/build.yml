@@ -43,7 +43,7 @@ jobs:
         shell: cmd
 
       - name: Install dependencies and build
-        run: build_win_cef.bat --dependencies --deploy --tests
+        run: ./build_win_cef.bat --dependencies --deploy --tests
 
       - name: Archive build artifacts
         run: |

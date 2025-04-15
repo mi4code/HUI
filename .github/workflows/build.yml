@@ -24,7 +24,7 @@ jobs:
           tar -czvf $BUILD_DIR.tar.gz $BUILD_DIR
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-gtk3-build
           path: HUI-linux-*.tar.gz
@@ -52,7 +52,7 @@ jobs:
           )
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-cef-build
           path: HUI-win-*.tar.gz

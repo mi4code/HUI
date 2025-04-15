@@ -1,9 +1,10 @@
 name: Build HUI
 
 on:
-  workflow_dispatch: # Allows manual trigger
+  workflow_dispatch:   # Allows manual trigger
 
 jobs:
+
   build-linux-gtk3:
     name: Build Linux GTK3 x64
     runs-on: ubuntu-22.04
@@ -16,18 +17,14 @@ jobs:
         run: |
           chmod +x ./build_linux_gtk3.sh
           sudo apt update
-          ls
           ./build_linux_gtk3.sh --dependencies --deploy --tests
-      - name: chk
-        run: |
-          ls
-          ls -R
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: linux-gtk3-build
           path: HUI-linux-*/
+
 
   build-win-cef:
     name: Build Windows CEF x64
@@ -37,7 +34,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Ensure 7-Zip is installed
+      - name: Run script
         run: |
           choco install 7zip -y
           ./build_win_cef.bat --dependencies --deploy --tests

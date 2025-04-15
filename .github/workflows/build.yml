@@ -17,14 +17,12 @@ jobs:
           chmod +x ./build_linux_gtk3.sh
           sudo apt update
           ./build_linux_gtk3.sh --dependencies --deploy --tests
-          BUILD_DIR=$(ls -d HUI-linux-*)
-          tar -czvf $BUILD_DIR.tar.gz $BUILD_DIR
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: linux-gtk3-build
-          path: HUI-linux-*.tar.gz
+          path: HUI-linux-*/
 
   build-win-cef:
     name: Build Windows CEF x64
@@ -37,19 +35,10 @@ jobs:
       - name: Ensure 7-Zip is installed
         run: |
           choco install 7zip -y
-        shell: cmd
-
-      - name: Install dependencies and build
-        run: ./build_win_cef.bat --dependencies --deploy --tests
-
-      - name: Archive build artifacts
-        run: |
-          FOR /D %%G IN (HUI-win-*) DO (
-              tar -czvf %%G.tar.gz %%G
-          )
+          ./build_win_cef.bat --dependencies --deploy --tests
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-cef-build
-          path: HUI-win-*.tar.gz
+          path: HUI-win-*/

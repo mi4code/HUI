@@ -26,7 +26,8 @@ if system == "Windows":
         libpath = sys.base_prefix  # C:\Program Files\Python312
         pyname = "python"+str(sys.version_info.major)+str(sys.version_info.minor)  # python312
         suffix = sysconfig.get_config_var('EXT_SUFFIX')  # .cp312-win_amd64.pyd
-        os.system("call \"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"  &&  cl /LD /EHsc /O2 /Fe:HUI"+suffix+" ../hui_python.cc "+includes+" /I\"..\" /link /LIBPATH:\""+libpath+"\\libs"+"\" "+pyname+".lib libHUI.lib")
+        #os.system("call \"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"  &&  cl /LD /EHsc /O2 /Fe:HUI"+suffix+" ../hui_python.cc "+includes+" /I\"..\" /link /LIBPATH:\""+libpath+"\\libs"+"\" "+pyname+".lib libHUI.lib")
+        os.system("cl /LD /EHsc /O2 /Fe:HUI"+suffix+" ../hui_python.cc "+includes+" /I\"..\" /link /LIBPATH:\""+libpath+"\\libs"+"\" "+pyname+".lib libHUI.lib")
         
     print("done")
 
@@ -56,7 +57,7 @@ else:
     print("unsupported os, sorry")
 
 
-input()
+
 
 """
 OLD NOTES:

@@ -13,11 +13,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+     # - name: Python version
+     #   uses: actions/setup-python@v5
+     #   with:
+     #     python-version: 3.13
+
       - name: Run script
         run: |
           chmod +x ./build_linux_gtk3.sh
           sudo apt update
           ./build_linux_gtk3.sh --dependencies --deploy --tests
+          cd HUI-linux-x86_64-webkit-gtk3
+          python3 ../build_python.py
+
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -34,10 +42,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Python version
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.13
+
+      - name: MSVC cmd
+        uses: TheMrMilchmann/setup-msvc-dev@v3
+        with:
+          arch: x64
+          
       - name: Run script
         run: |
           choco install 7zip -y
           ./build_win_cef.bat --dependencies --deploy --tests
+          cd HUI-win-AMD64-blink-cef
+          python ../build_python.py
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

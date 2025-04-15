@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link href="../hui_theme.css" rel="stylesheet" type="text/css" />
+	</head>
+
+	<body style="display: flex; align-content: flex-start; column-gap: 20px; row-gap: 5px; flex-wrap: nowrap; align-items: baseline;">
+	
+		<fieldset style="display: flex; align-content: flex-start; column-gap: 20px; row-gap: 5px; flex-wrap: wrap; align-items: center;">
+			<legend> section </legend>
+
+			<input type="button" value="Click me!">
+			<input type="number" value="123">
+			<input type="text" value="sample text">
+			<input type="range" value="0">
+			<input type="checkbox" checked>
+			<input type="radio" name="radio" checked>
+			<input type="radio" name="radio" checked>
+		</fieldset>
+
+		<fieldset style="display: flex; align-content: flex-start; column-gap: 20px; row-gap: 5px; flex-wrap: wrap; align-items: center;">
+			<p>label</p>
+			
+			<textarea>multiline
+text here</textarea>
+
+			<button>Click me!</button>
+			
+			<select>
+				<option value="selected" selected>selected</option>
+				<option value="unselected">unseleced</option>
+				<option value="disabled" disabled>disabled</option>
+			</select>
+		</fieldset>
+
+
+		<!-- 
+		TODOs ~ WHAT THIS TEST DOESNT TEST YET:
+			.hui_unstyled
+		
+		WHAT IS TESTED TROUGH USER INTERACTION:
+			:hover
+			:focus-visible
+			~text selection~
+			~kbd/mouse/touch controls~
+			~no touch/ctrl+mousewheel zoom~
+
+		-->
+
+	</body>
+</html>

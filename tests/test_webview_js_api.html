@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+	<body>
+
+		<style>
+
+body {
+	padding: 27px;
+}
+
+p {
+	font-family: Arial, Helvetica, sans-serif, bold;
+	color: black;
+	line-height: 35px;
+	font-size: 16px;
+	/*border: 2px black;*/
+}
+
+		</style>
+		
+		<p style="color: red;"> <b>NOT WORKING:</b> run <code>call_js</code> without return before main loop </p>
+		<p style="color: red;"> <b>NOT WORKING:</b> run <code>call_js</code> with return before main loop </p>
+		<p style="color: red;" onload="var callback_before_checker = setInterval(function(){ if(typeof callback_before === 'function'){document.querySelector('p:nth-of-type(3)').style.color='green'; document.querySelector('p:nth-of-type(3) b').innerText='OK: '; clearInterval(callback_before_checker); } },200);"> <b>NOT WORKING:</b> register callback using <code>call_native</code> and <code>call_js</code> before main loop </p>
+		
+		<p style="color: red;"> <b>NOT WORKING:</b> run <code>call_js</code> without return while in main loop </p>
+		<p style="color: red;"> <b>NOT WORKING:</b> run <code>call_js</code> with return while in main loop </p>
+		<p style="color: red;" onload="var callback_after_checker = setInterval(function(){ if(typeof callback_after === 'function'){document.querySelector('p:nth-of-type(6)').style.color='green'; document.querySelector('p:nth-of-type(6) b').innerText='OK: '; clearInterval(callback_after_checker); } },200);"> <b>NOT WORKING:</b> register callback using <code>call_native</code> and <code>call_js</code> while in main loop </p>
+
+		<!--
+		<p style="color: red;"> <b>NOT WORKING:</b> feature <code>run()</code> </p>
+		<p style="color: green; "> <b>OK:</b> feature <code>run()</code> <i>~100ms</i> </p>
+		-->
+
+		<script>
+
+test_variable = "test_value";
+document.querySelector('p:nth-of-type(3)').onload();
+document.querySelector('p:nth-of-type(6)').onload();
+
+		</script>
+
+	</body>
+</html>
+
+<!--
+
+show = reaching main loop
+
+call js before show
+create callback before show
+run callback before show
+[these will likely work delayed - after show]
+
+call js after show
+create callback after show
+run callback after show (both, by calling js and user gesture)
+run callback (the one created before show) after show (both, by calling js and user gesture)
+
+[use basic js call; after that run tests for element api]
+
+[the tests should show action delay for each action]
+
+-->

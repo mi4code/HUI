@@ -1,0 +1,299 @@
+ R"htuijsstr(
+
+/*
+This file is example and default HUI theme.
+Keep in mind that styling can affect performace if a lot of graphic effects (animations, transparency, images) are used.
+Apps are not required to apply the styles - apps may only use the defined colors and use own UI.  
+*/
+
+@charset "utf-8";
+
+:root {
+	
+	/******************** HUI styling variables ********************/
+	
+	--hui_var_language: "en";  /* ISO 639-1 (en) or IETF BCP 47 (en-US) */
+	--hui_var_theme_style: "dark"; /* dark/light */
+	/* TODO: multiple languages (preference list) */
+	/* TODO: language string parser and text replace based translate */
+	/* TODO: transparency enable/disable (may help performace), vibrancy/background blur (will need some help from backend/window manager configuration) */
+	/* NOTE: to config window decorations, use config for your WM (we dont support client-side-decorations, only server-side-decorations) */
+	
+	--hui_style_theme_color: white; /* color, used in CSS color-mix(in srgb, var(--hui_style_theme_color) 75%, {black or white} 25%)  */
+	--hui_style_text_font: "Consolas", monospace; /* font-family */
+	--hui_style_text_color: rgba(250,250,250,1); /* color */
+	--hui_style_text_scale: 1.0; /* float number, multiplies the default size, like calc( {size} * var(--hui_style_text_scale) ) */
+	--hui_style_elements_scale: 1.0; /* float number, multiplies the default size, like calc( {size} * var(--hui_style_elements_scale) ) */
+	--hui_style_elements_color: rgba(53,53,53,1);
+	--hui_style_background_color: rgba(23,23,23,0.85);
+	--hui_style_background_secondary_color: rgba(23,23,23,0.85);
+	/* NOTE: hover/focus color wouldnt reliably work because sometimes the effect is for example border style and not a color */
+	/* TODO: rounded corners - bool or value; may be dificuilt to set/use (this is not something that dev doing custom ui will want) */
+	/* TODO: selected text highlight - hard to set, cos its style not a color - maybe can be set globally */
+	/* TODO: background area, elements, div area = secondary background -- should these be of type color or background */
+	
+	/***************************************************************/
+	
+	/* just variables for this stylesheet */
+	--hui_color_background: rgba(23,23,23,0.85);
+	--hui_color_elements: rgba(53,53,53,1);
+	--hui_color_text: rgba(250,250,250,1);
+	--hui_font: var(--hui_style_text_font);
+	/*
+	--hui_ronded 1px;
+	--hui_color_text
+	--hui_color_area
+	--hui_color_elements
+	*/
+}
+
+/* font from data url */
+/*@font-face {
+	font-family: --hui_style_text_font;
+	src: url(data:@file/x-font-ttf;base64,...);
+}
+:root {
+	...
+	--hui_style_text_font: --hui_style_text_font;
+	...
+}
+*/
+
+/******************** HUI styling styles ********************/
+/************************************************************/
+
+.hui_unstyled {}
+.hui_styled {}
+
+.hui_translate {}
+
+.hui_scrollable {}
+.hui_zoomable {}
+
+
+/* p, div and span elements should be kept as they are */
+
+
+/* --- TEXT ELEMENTS --- */
+*:not(.hui_unstyled) {
+	font-family: var(--hui_font);
+}
+
+body:not(.hui_unstyled) {
+	background-color: var(--hui_color_background);
+	color: var(--hui_color_text);
+	font-size: 15px;
+}
+
+p:not(.hui_unstyled) {
+	
+}
+
+a:not(.hui_unstyled) {
+	font-style: italic;
+	text-decoration: underline;
+}
+
+
+/* --- TEXT INPUT ELEMENTS --- */
+
+button:not(.hui_unstyled), input:not(.hui_unstyled), select:not(.hui_unstyled), textarea:not(.hui_unstyled) {
+	background-color: var(--hui_color_elements);
+	color: var(--hui_color_text);
+
+	border: none;
+	border-radius: 2px;
+	
+	height: 35px;
+	min-width: 80px;
+	
+	text-indent: 3px;
+	
+	box-sizing: border-box; /* fixes different sizes of text/number inputs vs. button and button input and select with same css height set */
+}
+
+button:not(.hui_unstyled), input[type=button]:not(.hui_unstyled) {
+	text-indent: unset;
+	padding: 0 15px;
+	border: 2px solid rgba(0,0,0,0) !important; /* fix moving layout on focus */
+}
+
+select:not(.hui_unstyled) {
+	-webkit-appearance: none; /* fixes not applying background color under webkit2 but removes arrow */
+	
+	background: var(--hui_color_elements) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none" stroke="rgba(250,250,250,1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15l6 6 6-6"/></svg>') no-repeat 100% 50%;
+	padding-right: 32px;
+	
+	min-width: 112px; /* fixes width not matching text/number input elements */
+}
+
+input:not(.hui_unstyled), select:not(.hui_unstyled), *[contenteditable]:not(.hui_unstyled) { /* fixes moving layout on focus */
+	border-bottom: 2px solid rgba(0,0,0,0) !important;
+}
+
+input[type=number] { 
+    /* -moz-appearance: textfield; */ /* removes default ugly +/- arrows */
+    /* appearance: textfield; */ /* removes default ugly +/- arrows */
+	/* TODO: +/- in gecko/servo - may need some help from js (clickable corners) - maybe it would be better to do this trough shaddow root (for all eolements: number input, select, text datalist, ...) */
+	
+	background: var(--hui_color_elements) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -3 50 50" fill="none" stroke="rgba(250,250,250,1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M30 15 H40 M35 10 V20" /> <path d="M30 35 H40" /></svg>') no-repeat 100% 50%;
+}
+
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
+    /*-webkit-appearance: none;*/ /* removes default ugly +/- arrows */
+	opacity:0;
+    margin:0;
+    padding:0;
+    height: 100px;
+}
+
+
+input:focus-visible, select:focus-visible, *[contenteditable]:focus-visible, textarea:focus-visible { /* custom focus styling */
+	outline: none;
+	border-bottom: 2px solid var(--hui_color_text) !important;
+}
+
+button:focus-visible, input[type=button]:focus-visible, input[type=range]:focus-visible /*, *[tabindex]:focus-visible, a:focus-visible, *[onclick]:focus-visible*/ { /* custom focus styling */
+	outline: none;
+	border: 2px solid var(--hui_color_text) !important;
+}
+
+
+fieldset {
+	border: 2px solid var(--hui_color_elements);
+	border-radius: 2px;
+}
+
+
+
+
+/* --- OTHER ELEMENTS --- */
+
+
+input[type="radio"] {
+    appearance: none;
+    min-width: unset;
+    
+    width: 20px;
+    height: 20px;
+    /*border: 2px solid var(--hui_color_text);*/
+    border-radius: 50%;
+
+    cursor: pointer;
+	
+	border: 2px solid var(--hui_color_elements) !important; /* fix moving layout on focus */
+
+}
+
+input[type="radio"]:checked {
+    appearance: none;
+    min-width: unset;
+    
+    width: 20px;
+    height: 20px;
+    /*border: 2px solid rgba(0,0,0,0);*/
+    border-radius: 50%;
+
+    cursor: pointer;
+	background-color: var(--hui_color_text);
+	
+	
+
+}
+input[type=radio]:focus-visible {
+	box-shadow: 0 0 0 2px var(--hui_color_text);
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    min-width: unset;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+input[type="checkbox"]:checked::after {
+    content: "✔";
+    color: var(--hui_color_text);
+    font-size: 13px;
+    position: relative;
+    top: 1px;
+    left: 2px;
+}
+
+
+input[type="range"] {
+    min-width: 100px;
+    height: 10px;
+    background: var(--hui_color_elements);
+    border-radius: 5px;
+    outline: none;
+    -webkit-appearance: none;
+	border: 2px solid rgba(0,0,0,0) !important; /* fix moving layout on focus */
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 25px;
+  cursor: pointer; 
+  border-radius: 2px;
+  background: var(--hui_color_text);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 15px;
+  height: 25px;
+  cursor: pointer;
+  border-radius: 2px;
+  background: var(--hui_color_text);
+}
+
+textarea:not(.hui_unstyled) {
+	text-indent: 3px each-line; /* TODO: each-line not supported in chromium */
+}
+
+/* --- COMMON FOR ALL ELEMENTS --- */
+
+*:disabled {
+	filter: blur(0.9px);
+}
+
+/* TODO: hover effect done with opacity */
+/* TODO: animations */
+/* TODO: fractional scaling */
+/* TODO: focus on tabindex with dot overlay */
+/* TODO: user style javascript (but keep it safe) - now one can recompile HUI with hui.js edited */
+/* TODO: scrollable/zoomable area (div) + style scrollbars -> .hui_app vs. .hui_scrollable */
+/* TODO: research new ideas: <https://blogs.windows.com/msedgedev/2022/05/05/styling-select-elements-for-real/> <https://open-ui.org> */
+/* TODO: move rules to HUI-styling */
+
+/* TODO:  
+	?tables (extended)
+	file input (text input with browse button? + window)
+	time inputs (universal for all types of times/dates/ranges => popup)
+	color input (window?)
+	input type password (same as text input)
+ */
+ 
+
+/*
+TODO: THINK ABOUT:
+changes to html standard:
+ spinbuttons of inputs - <button><spinbutton/></button>
+ input type select - input elements can be called either <input type="text"> or <text>  --types: text, number, select, switch, button, checkbox, ?composite  --value is content, inner html is for (spin)buttons / datalist  --spinbutton usage: value-inc, value-dec, value-rst, value-rm, value-sel, value-hint, value-submit
+ dont change layout due to border changes (?solved -> box-sizing/transparent border/?outline)
+ solve CSS3 standard: content: "text" normal element vs pseudo ::before/after -> hui translate/... <https://github.com/w3c/csswg-drafts/issues/2889>
+ 
+rules:
+ use tabindex so apps are keyboard accesible
+ use title for text/llm accassibility --- acessibility: html title atribute for voice/ai control <https://stackoverflow.com/questions/7503183/what-is-the-easiest-way-to-create-an-html-mouseover-tool-tip>, all interactable elements should be focusable, review keyboard/mouse actions on inputs, touch should work well too
+
+ 
+*/
+
+
+
+ )htuijsstr" 

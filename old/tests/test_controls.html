@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<script>hui_window = class {};</script>
+  </head>
+
+  <body>
+	<div style="overflow-y: auto; height: 100%; margin: 0 80px 0 80px; padding: 3px;">
+	
+		<p>Unmanaged:</p>
+		<button onclick="hui_window.set_unmanaged();">set_unmanaged</button>
+		
+		<p>Title:</p>
+		<input id="title" type="text" value="HUI:::Window" oninput="hui_window.set_title(this.value);"/>
+		<!-- <input id="title_" type="text" disabled /> -->
+		
+		<p>Geometry:</p>
+		<form id="geometry">
+			<input type="number" id="x" value="-1"/>
+			<input type="number" id="y" value="-1"/>
+			<input type="number" id="w" value="300"/>
+			<input type="number" id="h" value="300"/>
+		
+			<!-- 
+			
+			<input type="checkbox" /> <label>fullscreen</label> 
+			
+			<input id="screen" type="number" value="-1" />
+			<input id="anchor_top" type="number" value="-1"/>
+			<input id="anchor_left" type="number" value="-1"/>
+			<input id="anchor_right" type="number" value="-1"/>
+			<input id="anchor_bottom" type="number" value="-1"/>
+			<input id="size_w" type="number" value="100"/>
+			<input id="size_h" type="number" value="100"/>
+			
+			-->
+		</form>
+		
+		
+		<p>Layer:</p>
+		<select id="layer" onchange="hui_window.set_layer(this.value);">
+			<option value="3">WL_OVERLAY = WL_TOPMOST</option>
+			<option value="2" selected>WL_TOP</option>
+			<option value="1">WL_BOTTOM = WL_TOPLEAST</option>
+			<option value="0">WL_BACKGROUND</option>
+		</select>
+		<!-- <select id="layer_" disabled>
+			<option value="3">WL_OVERLAY = WL_TOPMOST</option>
+			<option value="2">WL_TOP</option>
+			<option value="1">WL_BOTTOM = WL_TOPLEAST</option>
+			<option value="0">WL_BACKGROUND</option>
+		</select> -->
+		
+		
+		
+		<!--
+		<button id="set_">set_</button>
+		<button id="get_">get_</button> 
+		-->
+
+
+	</div>
+  </body>
+</html>

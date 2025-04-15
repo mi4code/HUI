@@ -1,0 +1,39 @@
+R"htuijsstr( 
+
+
+/************************* HUI fixes (common for all styles, everything works without them - its just ugly)  *************************/
+
+body::-webkit-scrollbar { /* hide scrollbar: webkit + chromium */
+  display: none;
+}
+body {
+  -ms-overflow-style: none;  /* hide scrollbar: ms internet explorer*/
+  scrollbar-width: none;  /* hide scrollbar: gecko */
+}
+body { /* maybe better way to get rid of the scrollbars */
+	position: fixed;
+	width: 100vw;
+	height: 100vh;
+	margin: none;
+}
+
+:root {
+  touch-action: none; /* disable touch zoom/scroll (should do the job, unfortuanetly doesnt work with gtk3-webkit2 but under chromium it works fine) */
+}
+
+*:not(input) { /* get rid of the text cursor (text selection disabled in body) */
+	cursor: default;
+}
+a { /* keep cursor for links */
+	cursor: pointer;
+}
+
+body { /* disable text selection */
+	-webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+
+
+
+)htuijsstr"

@@ -1,0 +1,57 @@
+cmake_minimum_required(VERSION 3.10)
+
+project(libHUI)
+
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Set the CEF root directory
+set(CEF_ROOT "_build_cache_cef_binary")
+
+# Include the CEF macros and settings
+find_package(CEF)
+
+# Set output directories
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+# Add source files
+#  we are at hui/build
+set(SOURCE_FILES ../hui_webview__blink_cef.cc)
+
+# Add executable target
+#add_executable(PlibHUI ${SOURCE_FILES})
+add_library(libHUI SHARED ${SOURCE_FILES})
+
+# Link to the CEF lib wrapper
+add_subdirectory(${CEF_ROOT} libcef_dll_wrapper)
+
+# Link to CEF libraries
+target_link_libraries(libHUI libcef_dll_wrapper)
+#  we are at hui/build/build (cd must have happened somewhere before)
+target_link_libraries(libHUI ../_build_cache_cef_binary/Release/libcef)
+#target_link_libraries(libHUI ../_build_cache_cef_binary/Release/libcef.lib)
+
+# Use static runtime (MT) for all builds -- TODO: is this needed?
+foreach(flag_var
+    CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+    CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE)
+    if(${flag_var} MATCHES "/MD")
+        string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+    endif()
+    if(${flag_var} MATCHES "/MDd")
+        string(REGEX REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
+    endif()
+endforeach()
+
+# Additional include and link directories
+include_directories(${CEF_ROOT}/include)
+include_directories(${CEF_ROOT})
+
+# Platform-specific settings
+if(WIN32)
+    add_definitions(-D_WINDOWS)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")
+endif()

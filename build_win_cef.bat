@@ -27,7 +27,7 @@ cd %BUILD%
 
 :: download from https://cef-builds.spotifycdn.com/index.html#windows64 (recommended minimal from 16.11.2024 - https://cef-builds.spotifycdn.com/cef_binary_131.2.3%2Bg023a05b%2Bchromium-131.0.6778.70_windows64_minimal.tar.bz2) and extract
 curl -L -o cef.tar.bz2 "https://cef-builds.spotifycdn.com/cef_binary_131.2.3%%2Bg023a05b%%2Bchromium-131.0.6778.70_windows64_minimal.tar.bz2"
-"C:\Program Files\7-Zip\7z.exe" x cef.tar.bz2 -so | "C:\Program Files\7-Zip\7z.exe" x -si -ttar -o.
+7z x cef.tar.bz2 -so | 7z x -si -ttar -o.
 ren ".\cef_binary_131.2.3+g023a05b+chromium-131.0.6778.70_windows64_minimal" "_build_cache_cef_binary"
 del /q .\cef.tar.bz2
 

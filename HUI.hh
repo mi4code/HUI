@@ -356,7 +356,7 @@ void        HUI_WebView_call_js_async (HUI_WebView object, const char* code, voi
 	static_cast<HUI::WebView*>(object)->call_js(code, cpp_callback);
 }
 const char* HUI_WebView_call_native (HUI_WebView object, void(*handler)(char**,int,void*), void* data, const char* process_args){
-	auto cpp_handler = [data,handler](std::vector<std::string> args)->void{
+	auto cpp_handler = [handler,&data](std::vector<std::string> args)->void{
 		// from <https://stackoverflow.com/a/26032303/21213243>
 		std::vector<char*> c_args;
 		c_args.reserve(args.size());
@@ -545,28 +545,28 @@ tested with: <https://jsbench.me>
 ---
 
 document.querySelectorAll("body div:nth-of-type(3)").forEach(function(e){e.innerText = "e";})
- [261 tis. ops/s ± 6.61% ~ 15.62 % slower]
+ [261 tis. ops/s Â± 6.61% ~ 15.62 % slower]
 
 (function(e){e.innerText = "e";})(document.querySelectorAll("body div")[2])
- [299 tis. ops/s ± 1.55% ~ 3.39 % slower]
+ [299 tis. ops/s Â± 1.55% ~ 3.39 % slower]
  
 document.querySelectorAll("body div")[2].innerText = "e";
- [303 tis. ops/s ± 2.73% ~ Fastest]
+ [303 tis. ops/s Â± 2.73% ~ Fastest]
  
 let q = document.querySelectorAll("body div:nth-of-type(3)");
 if (q.length == 1) {q[0].innerText = "e";}
 else {q.forEach(function(e){e.innerText = "e";})}
- [309 tis. ops/s ± 1.07% ~ Fastest]
+ [309 tis. ops/s Â± 1.07% ~ Fastest]
 
 ---
 
 document.querySelectorAll("body div").forEach(function(e){e.innerText = "e";})
- [308 tis. ops/s ± 2.95% ~ 18.12 % slower]
+ [308 tis. ops/s Â± 2.95% ~ 18.12 % slower]
  
 let q = document.querySelectorAll("body div");
 if (q.length == 1) {q[0].innerText = "e";}
 else {q.forEach(function(e){e.innerText = "e";})}
- [377 tis. ops/s ± 2.9% ~ Fastest]
+ [377 tis. ops/s Â± 2.9% ~ Fastest]
  
  
  

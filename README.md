@@ -137,19 +137,33 @@ closereq (only thing really missing, will need to figure out how to deal with mu
 ### Building apps
 *I decided to stick with the simplest tools.*
 
-Linux or MinGW `g++`:
+Linux or MinGW `g++` (C++):
 ```
 cd build
 g++ -o <binary> ../<source> -I../../HUI -L. -lHUI
 ```
-Windows MSVC `cl.exe`:
+Linux or MinGW `gcc` (C):
+```
+cd build
+gcc -o <binary> ../<source> -I../../HUI -L. -lHUI
+```
+Windows MSVC `cl.exe` (C++):
 ```
 cd build
 cl /EHsc /Fe:<binary>.exe ../<source> /I../../HUI /link /LIBPATH:. libHUI.lib
 ```
-C: `cl /Fe:<binary>.exe ../<source> /I../../HUI /link /LIBPATH:. libHUI.lib`
+Windows MSVC `cl.exe` (C):
+```
+cd build
+cl /Fe:<binary>.exe ../<source> /I../../HUI /link /LIBPATH:. libHUI.lib
+```
+Rust (first, copy your project into HUI root):
+```
+cd <your project>
+cargo build --release
+```
 
-(Both examples assume that HUI repo and app repo directories share the same directory. And that `build` directory already exists and contains `libHUI.so` or `libHUI.dll + libHUI.lib`)
+(All examples assume that HUI repo and app repo directories share the same directory. And that `build` directory already exists and contains `libHUI.so` or `libHUI.dll + libHUI.lib`)
 <!-- You may want to use $LD_LIBRARY_PATH or %PATH% environs if you dont have HUI installed or if you are experimenting with multiple versions. -->
 
 <!--

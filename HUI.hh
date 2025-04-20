@@ -147,37 +147,24 @@ void WebView::call_js (std::string code, std::function<void(std::string)> return
 	void(*callback_c)(const char*, void*) = [](const char* arg, void* data)->void{
 		static_cast<std::function<void(std::string)>*>(data)->operator()(std::string(arg));
 	};
-	#if defined(_MSC_VER) or defined(HUI_PYTHON)
-		// SEE NOTE IN call_native
-		std::function<void(std::string)>* callback_ptr = new std::function<void(std::string)>;
-		callback_ptr->operator=( return_callback ); 
-		
-		HUI_WebView_call_js_async (impl->pointer, code.c_str(), callback_c, callback_ptr);
-	#else
-		// for g++
-		HUI_WebView_call_js_async (impl->pointer, code.c_str(), callback_c, &return_callback);
-	#endif
+	
+	// see note in call_native
+	std::function<void(std::string)>* callback_ptr = new std::function<void(std::string)>;
+	callback_ptr->operator=( return_callback ); 
+	
+	HUI_WebView_call_js_async (impl->pointer, code.c_str(), callback_c, callback_ptr);
 }
 std::string WebView::call_native (std::function<void(std::vector<std::string>)> handler, std::string process_args){
 	void(*handler_c)(char**, int, void*) = [](char** args, int len, void* data)->void{
 		std::vector<std::string> args_cpp (args, args + len);
 		static_cast<std::function<void(std::vector<std::string>)>*>(data)->operator()(args_cpp);
 	};
-	#if defined(_MSC_VER) or defined(HUI_PYTHON)
-		// for MSVC cl.exe
-		/* fixes issue that caused apps to crash when callback was called form js,
-		   which was likely caused by the garbage collector, that way that since handler std::function was created inside the argument list, its lifetime ended after return of this function (so it didnt exist when it was called) 
-		   solved by following line that (creates memory leak) creates new object as a pointer and copies the function there (original fastfix solution was to change handler argument type to pointer which could be created in main of app code)
-           (note: there was similar issue with C API const char* return values - not sure but i think it was different set of compilers) */
-		// same situation happens with python bindings - when built to link to libHUI (my case was qt5+windows+mingw, not sure about other backends/platforms) and not include the backend (worked fine in the same case)
-		std::function<void(std::vector<std::string>)>* handler_ptr = new std::function<void(std::vector<std::string>)>;
-		handler_ptr->operator=( handler ); 
-		
-		auto cstr = HUI_WebView_call_native (impl->pointer, handler_c, handler_ptr, process_args.c_str());
-	#else
-		// for g++
-		auto cstr = HUI_WebView_call_native (impl->pointer, handler_c, &handler, process_args.c_str());
-	#endif
+
+	// creates "memory leak" to fix crashes caused by the callback being freed before being called (not the case with g++ on linux, but plugin interfaces, MSVC built binaries, python modules all crash)
+	std::function<void(std::vector<std::string>)>* handler_ptr = new std::function<void(std::vector<std::string>)>;
+	handler_ptr->operator=( handler ); 
+	auto cstr = HUI_WebView_call_native (impl->pointer, handler_c, handler_ptr, process_args.c_str());
+
 	auto str = std::string(cstr);
 	delete[] cstr;
 	return str;

@@ -5,28 +5,30 @@ R"htuijsstr(
 
 ////////  HUI enhancements and fixes  ////////
 
-function all_elements () {
-	
-	document.querySelectorAll("input[type='number']").forEach(input => { input.setAttribute("onmousewheel", ""); });  // allow changing vales of input type number using mousewheel (changing values using arrow keys works by default)
-	
-	document.querySelectorAll("select").forEach(select => { select.onmousewheel= function(e) { // allow changing vales of select using mousewheel (changing values using arrow kes works by default)
-		if (this.hasFocus) {
-			return;
-		}
-		if (e.deltaY < 0) {
-			this.selectedIndex = Math.max(this.selectedIndex - 1, 0);
-		}
-		if (e.deltaY > 0) {
-			this.selectedIndex = Math.min(this.selectedIndex + 1, this.length - 1);
-		}
-	}; });
-	
-}
+setTimeout(function(){
+	function all_elements () {
+		
+		document.querySelectorAll("input[type='number']").forEach(input => { input.setAttribute("onmousewheel", ""); });  // allow changing vales of input type number using mousewheel (changing values using arrow keys works by default)
+		
+		document.querySelectorAll("select").forEach(select => { select.onmousewheel= function(e) { // allow changing vales of select using mousewheel (changing values using arrow kes works by default)
+			if (this.hasFocus) {
+				return;
+			}
+			if (e.deltaY < 0) {
+				this.selectedIndex = Math.max(this.selectedIndex - 1, 0);
+			}
+			if (e.deltaY > 0) {
+				this.selectedIndex = Math.min(this.selectedIndex + 1, this.length - 1);
+			}
+		}; });
+		
+	}
 
-all_elements();
-const observer = new MutationObserver(function(){ all_elements(); });
-observer.observe(document.body, { childList: true, subtree: true });
+	all_elements();
+	const observer = new MutationObserver(function(){ all_elements(); });
+	observer.observe(document.body, { childList: true, subtree: true });
 
+}, 1000);
 
 // disable pinch zoom in gtk webkit (because it doesnt respect css or meta tags)
 if (window.webkit) {

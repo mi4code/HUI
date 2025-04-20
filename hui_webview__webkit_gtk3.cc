@@ -114,7 +114,7 @@ void WebView::load_uri (std::string uri){
 }
 
 void WebView::load_str (std::string str){
-	webkit_web_view_load_html (WEBKIT_WEB_VIEW(impl->webview), str.c_str() , "none");
+	webkit_web_view_load_html (WEBKIT_WEB_VIEW(impl->webview), str.c_str() , "none"); // TODO: fix js return when used
 	hui_tweaks();
 }
 
@@ -180,13 +180,13 @@ std::string WebView::call_js (std::string code, bool return_data){
 	HUI_DEBUG_PRINT("call js from cpp '"<<code<<"' ");
 	
 	if (return_data) {
-		struct upoint {HUI::Str str = ""; bool ok = false;} stat;
+		struct upoint {HUI::Str str = "<error obtaining value>"; bool ok = false;} stat;
 		
 		webkit_web_view_evaluate_javascript (WEBKIT_WEB_VIEW(impl->webview), code.c_str(), -1, NULL, NULL, NULL, +[](GObject *object, GAsyncResult *result, gpointer user_data) -> void {
 			JSCValue *value;
 			GError *error = NULL;
 			value = webkit_web_view_evaluate_javascript_finish (WEBKIT_WEB_VIEW (object), result, &error);
-			((upoint*)user_data)->str = jsc_value_to_string (value);
+			if (value and JSC_IS_VALUE(value))  ((upoint*)user_data)->str = jsc_value_to_string (value);
 			((upoint*)user_data)->ok = true;
 		}, &stat );
 		
@@ -197,8 +197,8 @@ std::string WebView::call_js (std::string code, bool return_data){
 	
 	else {
 		webkit_web_view_evaluate_javascript (WEBKIT_WEB_VIEW(impl->webview),code.c_str(),-1,NULL,NULL,NULL,NULL,NULL); //doesnt work at the begining of execution
-		webkit_user_content_manager_add_script( webkit_web_view_get_user_content_manager (WEBKIT_WEB_VIEW(impl->webview)), webkit_user_script_new(code.c_str(),WEBKIT_USER_CONTENT_INJECT_TOP_FRAME,WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_START,NULL,NULL) );
-		return "";
+		webkit_user_content_manager_add_script( webkit_web_view_get_user_content_manager (WEBKIT_WEB_VIEW(impl->webview)), webkit_user_script_new(code.c_str(),WEBKIT_USER_CONTENT_INJECT_TOP_FRAME,WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END,NULL,NULL) );  // has to be WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END and not WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_START otherwise it breaks js execution (however, for some reason this doesnt affect the 'test_webview_js_api' test)
+  		return "";
 	}
 	
 }

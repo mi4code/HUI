@@ -37,7 +37,7 @@ if (window.webkit) {
 }
 
 // disable right-click
-//document.addEventListener('contextmenu', event => event.preventDefault());
+document.addEventListener('contextmenu', event => event.preventDefault());
 
 ////////  HUI api ////////
 

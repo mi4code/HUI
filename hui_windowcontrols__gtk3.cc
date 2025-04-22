@@ -467,7 +467,7 @@ std::string WindowControls::get_id(){
 void WindowControls::set_exclusive_zone (int16_t zone){
 	if (gtk_layer_is_layer_window(GTK_WINDOW(*impl->window))){
 		if (zone == -2) gtk_layer_auto_exclusive_zone_enable(GTK_WINDOW(*impl->window));
-		else gtk_layer_set_exclusive_zone(GTK_WINDOW(*impl->window), zone);
+		else gtk_layer_set_exclusive_zone(GTK_WINDOW(*impl->window), zone);  // specs here: <https://github.com/wmww/gtk-layer-shell/blob/5f71546112fd284aced13e7b2391a601204bcacd/protocol/wlr-layer-shell-unstable-v1.xml#L176>
 	}
 	else {
 		// TODO: <https://stackoverflow.com/questions/3859045/preventing-window-overlap-in-gtk>

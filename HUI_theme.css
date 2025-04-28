@@ -127,7 +127,7 @@ select:not(.hui_unstyled) {
 	min-width: 112px; /* fixes width not matching text/number input elements */
 }
 
-input:not(.hui_unstyled), select:not(.hui_unstyled), *[contenteditable]:not(.hui_unstyled) { /* fixes moving layout on focus */
+input:not(.hui_unstyled), select:not(.hui_unstyled), *[contenteditable]:not(.hui_unstyled, td, th) { /* fixes moving layout on focus */
 	border-bottom: 2px solid rgba(0,0,0,0) !important;
 }
 

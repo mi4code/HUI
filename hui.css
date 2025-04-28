@@ -14,7 +14,7 @@ body { /* maybe better way to get rid of the scrollbars */
 	position: fixed;
 	width: 100vw;
 	height: 100vh;
-	margin: none;
+	margin: 0;
 }
 
 :root {

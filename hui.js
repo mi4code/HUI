@@ -33,14 +33,14 @@ setTimeout(function(){
 
 if (window.webkit) {
     // disable pinch zoom in gtk webkit (because it doesnt respect css or meta tags)
-    document.addEventListener('touchstart', function (event) { if(event.scale !== 1 && event.touches.length === 2){event.preventDefault();} }, {passive: false});
-    document.addEventListener('touchmove',  function (event) { if(event.scale !== 1 && event.touches.length === 2){event.preventDefault();} }, {passive: false});
+    window.addEventListener('touchstart', function (event) { if(event.scale !== 1 && event.touches.length === 2){event.preventDefault();} }, {passive: false});
+    window.addEventListener('touchmove',  function (event) { if(event.scale !== 1 && event.touches.length === 2){event.preventDefault();} }, {passive: false});
 
     // fix issue when drag'n dropping file onto the webview replaced the content with the dropped file (from <https://github.com/wailsapp/wails/issues/3686>)
-    addEventListener("drop", (event) => {
+    window.addEventListener("drop", (event) => {
         event.preventDefault();
     });
-    addEventListener("dragover", (event) => {
+    window.addEventListener("dragover", (event) => {
         event.preventDefault();
     });
 }

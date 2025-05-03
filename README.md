@@ -2,7 +2,7 @@
 *HTML UI* \
 *Hyper Text Markup Language User Interface* 
 
-Library aiming to deliver simple API for building apps with `HTML`+`CSS`+`JS` UI in `C`/`C++`/`Python` and thus make developing GUI app as easy as it can be.
+Library aiming to deliver simple API for building apps with `HTML`+`CSS`+`JS` UI in `C`/`C++`/`Python`/`Rust` and thus make developing GUI app as easy as it can be.
 You will be not limited to desktop apps - HTTP backend lets you to do anything from desktop app to web app with one API (*comming soon; see limitations*).
 Currently Linux and Windows are supported *(more comming soon)*.
 I'm aware that the code quality is not the best however it mostly works plus it's up to you whether you decide to use it.
@@ -207,84 +207,128 @@ HUI 'newnew' - attempt to reimplement HUI from beginning \
 | BACKEND | STATUS | OS | NOTES |
 |---|---|---|---|
 | WebKit (GTK3) | *working* | Linux (x86_64, arm64, armhf) | ok |
-| Blink (CEF) | *working, buggy* | Windows (AMD64) | GPU acceleration disabled (causes crashes); transparency not working |
+| Blink (CEF) | *working* | Windows (AMD64) | GPU acceleration disabled (causes crashes); transparency not working |
 | Webkit (Qt5) | *working, deprecated* | Windows, Linux | uses old HTML/CSS/JS |
 | none (dummy) | *working* | *all* |  |
 
 
 
 #### TODOs / Progress tracking
- <!-- done/progress -->
- - [api] backend_name/window_type (x11, wayland) 
- - [api] load_uri, load_str, load_file (path enhancements?)
- - [build] rename hui_cpp_to_c_helper.hh to hui.cc + handle platforms/multiplatform here (may need to redo build scripts) + put things into directories + ?using namespace :: in those files
- - [api] support layer-shell again -- init? / defered part of constructor -> solves "before show" and "before creation"
+<!-- sort from most important to least -->
 
- <!-- important -->
- - [api] clean exit -> exit()
- - [build] debug control, python bindings flag, handle hui.js and hui.css as define/text replace (so we dont need quoting)
- - [api] callbacks for window close
- - [tests] tests: async js, window ctls, load_*
- - [new_backend] rust http server (something between desktop app and web app) + url or browser in kiosk mode <https://superuser.com/questions/716426/running-latest-chrome-for-windows-in-kiosk-mode>
- - [api: cpp] fix copy/move constructor issues with HUI::WebView()
- - [api] reconsider window.show/realize
- 
- <!-- needed -->
- - [api] callbacks for window controls
- - [tweaks] get rid of private js and css (if possible and if safe)
- - [api, js_api] put sent2cpp_handlers into impl (if possible) or get rid of them; do: js calls cpp -> cpp calls one function that handles callbacks on the api/abi level
- - [api] inheritance for backend implementations (and maybe namespaces for backends -> multi-backend); methods: call_native, call_js/call_js_async, html_element
- - [api, js_api] more native and faster 'html_element'/js api
- - [js_api] expose whole api to js (just set of callbacks from js)
- - [new_backend] cef linux
+<details><summary><h3> important </h3></summary>
 
- <!-- enhancements -->
- - [tweaks, controls] support client-side decorations trough user styling/scripting  + select/get decoration scheme
- - [tweaks] auto update theme (not sure about the js) -- maybe it can be just autorefresh implemented in js for loading stylesheet from custom app:// protocol
- - [js_api] return from callback
- - [new_backend] consider more backends, even proprietary <https://ultralig.ht> <https://docs.rs/sciter-rs/latest/sciter/> (sciter is probably not compatible with html5/css3)
- - [new_backend] update Qt backend with all Qt webViews availible (WebKit, CefView, MozEmbed, Ultralight, ...) - <https://github.com/niutech/qt-ultralight-browser?tab=readme-ov-file> -- this seems to be the easiest way to support the most backends
+- [ ] clean exit -> exit()
+- [ ] cpp: fix copy/move constructor issues with HUI::WebView()
+- [ ] rust bindings: clean + polish + set_geometry + constants
 
- <!-- future -->
- - [tweaks] (BIG PLAN) allow dynamically changed themes per screen/app/schedule *.css (may be done trough external tool and storage unshare -> HUI wayfire tool ~ but how to multiwindow?) --- per screen themes (TODO: need to be able to have two themes aplied side by side when shown on more than one monitor ~ switch themes quickly and stop updating the other area of the window)
- - [api] threaded/multiprocess message loop (will need to figure out a way to return thread to c api) + thread-safety (the easiest solution seems to be creating optional thread safe wrapper running everything in external thread and handling the communication)
- - [api] (BIG PLAN) upgrade API to serve as fully-featured and platform/renderer-agnostic base for building web browser (browser-beta)
- - [new_backend] console backends: Cuervo (https://servo.org/made-with/#), the terminal browser project with chromium, old console browsers with js support
- - [building] single master build script for everything + make it possible to combine windowcontrols/webview/windowembeder in different languages at linkage time
- <!--  -->
- 
- - [ ] add concept of app - name, icon, ...  => app property: void set_taskbar_icon(icon, name) + app.add(HUI::Window)
+</details>
 
- - [ ] controls: callbackes(on_closing vs. on_closed ?)
- - [ ] add back windows controls; controls can have dual handles - backend + handle - or there may be 2 types of controls (toolkit + os) == window handle X backend pointer X c api pointer
- - [ ] WindowEmbeder (?): fix: black space when resizing -> two options = black artifacts and instant resize OR little laggy resize but no artifacts; [window embeding (see win implementation and wayland notes in old readme)]
- - [ ] window controls: parent/child windows (see old readme); popup windows (likely just prepared regular window; positioning and window type is yet to be discussed especialy for wayland)
- - [ ] wayland controls: <https://wayland.app/protocols/xdg-shell>
- 
- - [ ] support MacOS - should work but untested + missing build scripts <https://ports.macports.org/port/webkit2-gtk/details/>
- 
- - [ ] new backend: rust HTTP backend (something between desktop app and web app => "server mode" - app can run on headless server; prints out ui url / opens browser in kiosk mode ~ can work with with wrapper to get window id to control it) ~ multiuser: configurable action when user tries to connect existing instance (new app instance OR nothing; should be per app or per backend configurable?)
- - [ ] new backend: gtk4 rust webkit
 
- - [ ] check for memory leaks - install valgrind <https://valgrind.org/docs/manual/quick-start.html#quick-start.intro> <https://valgrind.org/downloads/current.html> <https://valgrind.org/docs/manual/dist.readme.html>
- 
- - [ ] support drag and drop and copy/paste for text, files, images, application-specific (=allow real paths + predefined callbacks)
- - [ ] have option to run like regular webview -> rethink the automatic running of `hui_tweaks()` 
- - [ ] upgrade build scripts (error handling, bindings, packaging, colors) -> multibuild script calling the other scripts
- 
- - [ ] refine purpose of hui.js/hui.css/theme file (fr scale + colors + elements) -- complete user styling and settings (1 css file)
- - [ ] unify js helper names across all platforms + create js API (should offer 2 options sync and async)
- - [ ] store native callbacks so that we can skip the C++ to C to C++ (maybe - seems to be complicated in respect to its benefits) -- will be likely better than the hell when converting the callbacks from one language to another
+<details><summary><h3> building </h3></summary>
 
- - [ ] ?better api (or just leave it for now):  load_uri ;;; (string map based settings -- browser specific -- similar to flags) ;;; call_native handled by lang bindings -> simpler, easier, safer (but more complicated) -- make the call_native() be handled by the language bindings (issue with c->cpp, c only, header-only)
- - [ ] run without window manager - see notes in old readme (its better to include tiny wl compositor ~ so maybe nothing has to be done here)
- - [ ] allow moving running app from one browser to another (restore html and js context) -- without action from dev code (CANT BE THAT HARD - serialize all js including functions + <html>.outerHTML)
- - [ ] (BIG PLAN) display server in browser (replacement for x11 and wayland -- when launched in browser in kiosk mode as fullscreenm) - relatively easy + can pair with greenfield (html wayland compositor -> support for legacy/direct drawing)
+- [ ] single master build script for everything + make it possible to combine windowcontrols/webview/windowembeder in different languages at linkage time
+- [ ] debug control flag/rust --debug/release
+- [ ] c, cpp, rust, python bindings in own directories
+- [ ] put backends in own directories + make it possible to build webview and controls separately
+- [ ] handle hui.js and hui.css as define/text replace (so we dont need quoting)
+- [ ] create master build script that calls others + build scripts directory + release naming ( HUI-{platform}-{backend}_{version or commit hash}_{more info} )
+- [x] ~~upgrade build scripts (error handling, bindings, packaging, colors) -> multibuild script calling the other scripts~~
 
- - [ ] add popup (any popup ~ popups are not currently supported) that can exist outside the window (may be good idea to prepare the popup window)
- - [ ] create master build script that calls others + build scripts directory + release naming ( HUI-{platform}-{backend}_{version or commit hash}_{more info} )
+</details>
+
+
+<details><summary><h3> backends </h3></summary>
+
+- [ ] js bindings: expose whole api to js (just set of callbacks from js)
+- [ ] rust http server (something between desktop app and web app) + url or browser in kiosk mode <https://superuser.com/questions/716426/running-latest-chrome-for-windows-in-kiosk-mode>
+- [ ] new backend: rust HTTP backend (something between desktop app and web app => "server mode" - app can run on headless server; prints out ui url / opens browser in kiosk mode ~ can work with with wrapper to get window id to control it) ~ multiuser: configurable action when user tries to connect existing instance (new app instance OR nothing; should be per app or per backend configurable?)
+- [ ] cef linux (rework current cef impl)
+- [ ] support MacOS - should work but untested + missing build scripts <https://ports.macports.org/port/webkit2-gtk/details/>
+- [ ] consider more backends, even proprietary <https://ultralig.ht> <https://docs.rs/sciter-rs/latest/sciter/> (sciter is probably not compatible with html5/css3)
+- [ ] update Qt backend with all Qt webViews availible (WebKit, CefView, MozEmbed, Ultralight, ...) - <https://github.com/niutech/qt-ultralight-browser?tab=readme-ov-file> -- this seems to be the easiest way to support the most backends
+- [ ] new backend: gtk4/5 rust webkit
+- [ ] console backends: Cuervo (https://servo.org/made-with/#), the terminal browser project with chromium, old console browsers with js support
+
+</details>
+
+
+<details><summary><h3> js api </h3></summary>
+
+- [ ] 'js_object'
+- [ ] use 'app://' custom protocol for loading files/content
+- [ ] more native and faster 'html_element'/js api
+- [ ] support js types (instead of just js code as string)
+- [ ] return from callback
+
+</details>
+
+
+<details><summary><h3> tests </h3></summary>
+
+- [ ] create example_simple and example_advanced in all supported languages that will to exactly the same
+- [ ] proper tests: async js, window ctls, load_*
+
+</details>
+
+
+<details><summary><h3> api </h3></summary>
+
+- [ ] support drag and drop and copy/paste for text, files, images, application-specific (=allow real paths + predefined callbacks) -> define for events in call_native
+- [ ] callbacks for window close (on_closing vs. on_closed)
+- [ ] callbacks for window controls
+- [ ] reconsider window.show/realize
+- [ ] add concept of app - name, icon, ...  => app property: void set_taskbar_icon(icon, name) + app.add(HUI::Window)
+- [ ] threaded/multiprocess message loop (will need to figure out a way to return thread to c api) + thread-safety (the easiest solution seems to be creating optional thread safe wrapper running everything in external thread and handling the communication)
+
+</details>
+
+
+<details><summary><h3> tweaks </h3></summary>
+
+- [ ] support client-side decorations trough user styling/scripting  + select/get decoration scheme
+- [ ] auto update theme (not sure about the js) -- maybe it can be just autorefresh implemented in js for loading stylesheet from custom app:// protocol
+- [ ] get rid of private js and css (if possible and if safe) -- it should work as simple inject css/js as in browsers (limited to app:// protocol)
+- [ ] (BIG PLAN) allow dynamically changed themes per screen/app/schedule *.css (may be done trough external tool and storage unshare -> HUI wayfire tool ~ but how to multiwindow?) --- per screen themes (TODO: need to be able to have two themes aplied side by side when shown on more than one monitor ~ switch themes quickly and stop updating the other area of the window)
+- [ ] have option to run like regular webview -> rethink the automatic running of `hui_tweaks()` 
+
+</details>
+
+
+<details><summary><h3> future </h3></summary>
  
- - [ ] research existing projects/ideas that can be used within this project
+- [api] (BIG PLAN) upgrade API to serve as fully-featured and platform/renderer-agnostic base for building web browser (browser-beta)
+
+- [x] add back windows controls; controls can have dual handles - backend + handle - or there may be 2 types of controls (toolkit + os) == window handle X backend pointer X c api pointer
+- [ ] WindowEmbeder (?): fix: black space when resizing -> two options = black artifacts and instant resize OR little laggy resize but no artifacts; [window embeding (see win implementation and wayland notes in old readme)]
+- [ ] window controls: parent/child windows (see old readme); popup windows (likely just prepared regular window; positioning and window type is yet to be discussed especialy for wayland)
+- [ ] wayland controls: <https://wayland.app/protocols/xdg-shell>
+
+- [ ] check for memory leaks - install valgrind <https://valgrind.org/docs/manual/quick-start.html#quick-start.intro> <https://valgrind.org/downloads/current.html> <https://valgrind.org/docs/manual/dist.readme.html>
+
+- [ ] refine purpose of hui.js/hui.css/theme file (fr scale + colors + elements) -- complete user styling and settings (1 css file)
+- [ ] unify js helper names across all platforms
+
+- [ ] ?better api (or just leave it for now):  load_uri ;;; (string map based settings -- browser specific -- similar to flags) ;;; call_native handled by lang bindings -> simpler, easier, safer (but more complicated) -- make the call_native() be handled by the language bindings (issue with c->cpp, c only, header-only)
+- [ ] run without window manager - see notes in old readme (its better to include tiny wl compositor ~ so maybe nothing has to be done here)
+- [ ] allow moving running app from one browser to another (restore html and js context) -- without action from dev code (CANT BE THAT HARD - serialize all js including functions + <html>.outerHTML)
+- [ ] (BIG PLAN) display server in browser (replacement for x11 and wayland -- when launched in browser in kiosk mode as fullscreenm) - relatively easy + can pair with greenfield (html wayland compositor -> support for legacy/direct drawing)
+
+- [ ] add popup (any popup ~ popups are not currently supported) that can exist outside the window (may be good idea to prepare the popup window)
+
+- [ ] research existing projects/ideas that can be used within this project
+
+- [ ] ? put sent2cpp_handlers into impl (if possible) or get rid of them; do: js calls cpp -> cpp calls one function that handles callbacks on the api/abi level === store native callbacks so that we can skip the C++ to C to C++ (maybe - seems to be complicated in respect to its benefits) -- will be likely better than the hell when converting the callbacks from one language to another
+- [ ] ? inheritance for backend implementations (and maybe namespaces for backends -> multi-backend); methods: call_native, call_js/call_js_async, html_element
+- [ ] ? controls: callbacks
+
+</details>
+
+
+
+
+ 
+
  
  
 #### BUGs:

@@ -241,6 +241,7 @@ HUI 'newnew' - attempt to reimplement HUI from beginning \
 <details><summary><h3> backends </h3></summary>
 
 - [ ] js bindings: expose whole api to js (just set of callbacks from js)
+- [ ] native controls: windows / x11 / wayland (+ wayfire/wlr/kwin/... additions) 
 - [ ] rust http server (something between desktop app and web app) + url or browser in kiosk mode <https://superuser.com/questions/716426/running-latest-chrome-for-windows-in-kiosk-mode>
 - [ ] new backend: rust HTTP backend (something between desktop app and web app => "server mode" - app can run on headless server; prints out ui url / opens browser in kiosk mode ~ can work with with wrapper to get window id to control it) ~ multiuser: configurable action when user tries to connect existing instance (new app instance OR nothing; should be per app or per backend configurable?)
 - [ ] cef linux (rework current cef impl)
@@ -280,6 +281,7 @@ HUI 'newnew' - attempt to reimplement HUI from beginning \
 - [ ] reconsider window.show/realize
 - [ ] add concept of app - name, icon, ...  => app property: void set_taskbar_icon(icon, name) + app.add(HUI::Window)
 - [ ] threaded/multiprocess message loop (will need to figure out a way to return thread to c api) + thread-safety (the easiest solution seems to be creating optional thread safe wrapper running everything in external thread and handling the communication)
+- [ ] add universal window embedder (part of window controls)
 
 </details>
 
@@ -321,6 +323,7 @@ HUI 'newnew' - attempt to reimplement HUI from beginning \
 - [ ] ? put sent2cpp_handlers into impl (if possible) or get rid of them; do: js calls cpp -> cpp calls one function that handles callbacks on the api/abi level === store native callbacks so that we can skip the C++ to C to C++ (maybe - seems to be complicated in respect to its benefits) -- will be likely better than the hell when converting the callbacks from one language to another
 - [ ] ? inheritance for backend implementations (and maybe namespaces for backends -> multi-backend); methods: call_native, call_js/call_js_async, html_element
 - [ ] ? controls: callbacks
+- [ ] browser level api - tabs, flag settings, extenition api, inspector, sandbox, contexts/private mode/sessions management, zoom/right click menu/scrollbars/pip, existing js apps support + html shebang
 
 </details>
 

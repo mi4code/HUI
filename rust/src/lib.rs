@@ -319,7 +319,7 @@ impl Drop for WindowControls {
 }
 
 
-#[link(name = "libHUI")]  // or HUI if the linker/compiler complains 
+// #[link(name = "libHUI")]  // libHUI (windows) or HUI (linux) - set dynamically in build.rs 
 extern "C" {
 	
     // WebView FFI

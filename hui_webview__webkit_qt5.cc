@@ -186,7 +186,7 @@ std::string WebView::call_js (std::string code, bool return_data){
 }
 std::string WebView::call_native (std::function<void(std::vector<std::string>)> handler, std::string process_args){
 	sent2cpp_handlers.push_back(handler);
-	return "function(..._args_array){qt_window.call_from_js_to_cpp( '"+std::to_string(sent2cpp_handlers.size()-1)+"'+',\"'+("+process_args+")(_args_array).join('\",\"')+'\"' );}";
+	return "function(..._args_array){qt_window.call_from_js_to_cpp( '"+std::to_string(sent2cpp_handlers.size()-1)+"'+',\"'+("+process_args+")(..._args_array).join('\",\"')+'\"' );}";
 }
 
 std::string WebView::backend_name (){

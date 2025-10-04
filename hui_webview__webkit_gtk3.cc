@@ -205,7 +205,7 @@ std::string WebView::call_js (std::string code, bool return_data){
 
 std::string WebView::call_native (std::function<void(std::vector<std::string>)> handler, std::string process_args){
 	sent2cpp_handlers.push_back(handler);
-	auto dd = std::string()+"function(..._args_array){ window.webkit.messageHandlers['sent2cpp'].postMessage( '"+std::to_string(sent2cpp_handlers.size()-1)+"'+',\"'+("+process_args+")(_args_array).join('\",\"')+'\"' ); }";
+	auto dd = std::string()+"function(..._args_array){ window.webkit.messageHandlers['sent2cpp'].postMessage( '"+std::to_string(sent2cpp_handlers.size()-1)+"'+',\"'+("+process_args+")(..._args_array).join('\",\"')+'\"' ); }";
 	HUI_DEBUG_PRINT("created js function "<<dd);
 	return dd;
 }

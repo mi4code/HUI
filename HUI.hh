@@ -2,6 +2,7 @@
 #define _HUI_hh_
 
 #include "HUI.h"
+#include "hui_datatypes.h"  // TODO: refactor contents and move them here
 
 #include <string>
 #include <vector>
@@ -532,28 +533,28 @@ tested with: <https://jsbench.me>
 ---
 
 document.querySelectorAll("body div:nth-of-type(3)").forEach(function(e){e.innerText = "e";})
- [261 tis. ops/s ± 6.61% ~ 15.62 % slower]
+ [261 tis. ops/s Â± 6.61% ~ 15.62 % slower]
 
 (function(e){e.innerText = "e";})(document.querySelectorAll("body div")[2])
- [299 tis. ops/s ± 1.55% ~ 3.39 % slower]
+ [299 tis. ops/s Â± 1.55% ~ 3.39 % slower]
  
 document.querySelectorAll("body div")[2].innerText = "e";
- [303 tis. ops/s ± 2.73% ~ Fastest]
+ [303 tis. ops/s Â± 2.73% ~ Fastest]
  
 let q = document.querySelectorAll("body div:nth-of-type(3)");
 if (q.length == 1) {q[0].innerText = "e";}
 else {q.forEach(function(e){e.innerText = "e";})}
- [309 tis. ops/s ± 1.07% ~ Fastest]
+ [309 tis. ops/s Â± 1.07% ~ Fastest]
 
 ---
 
 document.querySelectorAll("body div").forEach(function(e){e.innerText = "e";})
- [308 tis. ops/s ± 2.95% ~ 18.12 % slower]
+ [308 tis. ops/s Â± 2.95% ~ 18.12 % slower]
  
 let q = document.querySelectorAll("body div");
 if (q.length == 1) {q[0].innerText = "e";}
 else {q.forEach(function(e){e.innerText = "e";})}
- [377 tis. ops/s ± 2.9% ~ Fastest]
+ [377 tis. ops/s Â± 2.9% ~ Fastest]
  
  
  

@@ -11,7 +11,7 @@
 #endif
 
 
-#define HUI_DEBUG
+// #define HUI_DEBUG
 
 #if defined(HUI_DEBUG)
   #define HUI_DEBUG_PRINT(msg) std::cout<<"\n [HUI::DEBUG] "<<msg<<" \n"

@@ -6,10 +6,10 @@
 if [[ " $@ " =~ " --dependencies " ]]; then
 	if [[ -f /etc/debian_version ]]; then
 		# Debian/Ubuntu/Raspbian
-		sudo apt install -y g++ libgtk-3-dev libwebkit2gtk-4.0-dev libgtk-layer-shell-dev
+		sudo apt install -y g++ libgtk-3-dev libwebkit2gtk-4.1-dev libgtk-layer-shell-dev
 	elif [[ -f /etc/arch-release ]]; then
 		# Arch/Manjaro
-		sudo pacman -S --noconfirm base-devel gtk3 webkit2gtk gtk-layer-shell
+		sudo pacman -S --noconfirm base-devel gtk3 webkit2gtk-4.1 gtk-layer-shell
 	else
 		echo "unable to install dependencies - unsupported system"
 	fi
@@ -29,7 +29,7 @@ cd $BUILD
 ## Build
 
 # build
-g++ -shared -fPIC -o ./libHUI.so ../hui_webview__webkit_gtk3.cc -I.. `pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0 gtk-layer-shell-0`
+g++ -shared -fPIC -o ./libHUI.so ../hui_webview__webkit_gtk3.cc -I.. `pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1 gtk-layer-shell-0`
 
 
 ## Deploy

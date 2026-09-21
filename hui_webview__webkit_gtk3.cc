@@ -1,6 +1,7 @@
 #ifndef _hui_webview_
 #define _hui_webview_
 
+#define _hui_webview_use_common_code
 #include "HUI.hh"
 
 #include "./hui_datatypes.h"

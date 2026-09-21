@@ -217,19 +217,19 @@ class Str : private std::string {
 
  };
 
-Str operator+(const char* a, Str b){
+inline Str operator+(const char* a, Str b){
 	return Str({a,b});
 }
-Str operator+(Str a, const char* b){
+inline Str operator+(Str a, const char* b){
 	return Str({a,b});
 }
-Str operator+(Str a, Str b){
+inline Str operator+(Str a, Str b){
 	return Str({a,b});
 }
-std::ostream& operator<<(std::ostream& stream, Str& s){
+inline std::ostream& operator<<(std::ostream& stream, Str& s){
     return (stream << s.cpp_str());
 }
-std::istream& operator>>(std::istream& stream, Str& s){
+inline std::istream& operator>>(std::istream& stream, Str& s){
     std::string ss;
 	stream>>ss;
 	s = ss;
@@ -244,7 +244,7 @@ std::istream& operator>>(std::istream& stream, Str& s){
 //const char[] EXECUTABLE_NAME = 
 
 #if defined(_WIN32) // windows
-Str filepath(Str fn){ // TODO: as fix for msys2-mingw-qt there is '/' before disk letter -> "/C:/Users/..."  +  complete
+inline Str filepath(Str fn){ // TODO: as fix for msys2-mingw-qt there is '/' before disk letter -> "/C:/Users/..."  +  complete
 	fn = fn.replace("\\","/");
 	fn = fn.replace("%userprofile%",getenv("userprofile"));
 	if (fn.find("/") == -1){
@@ -264,7 +264,7 @@ Str filepath(Str fn){ // TODO: as fix for msys2-mingw-qt there is '/' before dis
 	else  return fn;	
 }
 #else // linux
-Str filepath(Str fn){
+inline Str filepath(Str fn){
 	fn = fn.replace("\\","/");
 	fn = fn.replace("$HOME",getenv("HOME"));
 	if (fn.find("/") == -1){

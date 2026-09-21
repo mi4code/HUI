@@ -1,4 +1,18 @@
-// NOW, THIS JUST CODE APPENDED TO WEBVIEW 
+#ifndef _hui_controls_
+#define _hui_controls_
+
+//#define _hui_webview_use_common_code
+#include "HUI.hh"
+
+#include "./hui_datatypes.h"
+#include <gtk/gtk.h>
+#include <gdk/gdkx.h>
+#include <gdk/gdkwayland.h>
+#include <gtk-layer-shell.h>
+#include <iostream>
+
+
+namespace HUI {
 
 struct WindowControls::pImpl {
 	GtkWidget** window = NULL;
@@ -539,3 +553,6 @@ uint8_t WindowControls::get_input_mode_keyboard (){
 	}
 }
 
+
+} // HUI
+#endif // _hui_controls_

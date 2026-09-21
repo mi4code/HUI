@@ -1,16 +1,12 @@
 #ifndef _hui_backend_
 #define _hui_backend_
 
-#define _hui_webview_use_common_code
 #include "HUI.hh"
 
 #include "./hui_datatypes.h"
 #include <fstream>
 #include <gtk/gtk.h>
-#include <gdk/gdkx.h>
-#include <gdk/gdkwayland.h>
 #include <webkit2/webkit2.h>
-#include <gtk-layer-shell.h>
 #include <iostream>
 
 

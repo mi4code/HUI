@@ -108,7 +108,7 @@ class
 } // HUI
 
 
-#if !defined(_hui_backend_) and !defined(_hui_controls_) and !defined(_hui_webview_)  // C API -> C++ API (used when including the library)
+#if !defined(_hui_backend_) && !defined(_hui_controls_) && !defined(_hui_webview_)  // C API -> C++ API (used when including the library)
 
 namespace HUI {
 
@@ -298,7 +298,7 @@ WindowInputMode WindowControls::get_input_mode_keyboard() {
 #endif // _hui_backend_
 
 
-#if defined(_hui_backend_) or defined(_hui_webview_) or defined(_hui_controls_)  // C++ API -> C API (used when building the library)
+#if defined(_hui_backend_) || defined(_hui_webview_) || defined(_hui_controls_)  // C++ API -> C API (used when building the library)
 
 
 #ifdef __cplusplus

@@ -1,5 +1,5 @@
-#ifndef _hui_backend_
-#define _hui_backend_
+#ifndef _hui_webview_
+#define _hui_webview_
 
 #include "HUI.hh"
 
@@ -263,4 +263,4 @@ void WebView::exit (){
 
 
 } // HUI
-#endif // _hui_backend_
+#endif // _hui_webview_

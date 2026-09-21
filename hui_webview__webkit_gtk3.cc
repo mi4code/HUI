@@ -6,6 +6,8 @@
 #include "./hui_datatypes.h"
 #include <fstream>
 #include <gtk/gtk.h>
+#include <gdk/gdkx.h>
+#include <gdk/gdkwayland.h>
 #include <webkit2/webkit2.h>
 #include <iostream>
 

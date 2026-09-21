@@ -6,7 +6,11 @@
  #include <string>
  #include <vector>
  #include <iostream>
- 
+
+ #if defined(_MSC_VER)
+  #include <ciso646>
+ #endif
+
  #if defined(_WIN32) // windows
   #include <Windows.h>
  #else

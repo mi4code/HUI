@@ -108,7 +108,7 @@ class
 } // HUI
 
 
-#if !defined(_hui_backend_)  // C API -> C++ API (used when including the library)
+#if !defined(_hui_backend_) and !defined(_hui_controls_) and !defined(_hui_webview_)  // C API -> C++ API (used when including the library)
 
 namespace HUI {
 
@@ -298,7 +298,7 @@ WindowInputMode WindowControls::get_input_mode_keyboard() {
 #endif // _hui_backend_
 
 
-#if defined(_hui_backend_)  // C++ API -> C API (used when building the library)
+#if defined(_hui_backend_) or defined(_hui_webview_) or defined(_hui_controls_)  // C++ API -> C API (used when building the library)
 
 
 #ifdef __cplusplus
@@ -309,6 +309,7 @@ extern "C" {
 #include "HUI.h"
 #include <cstring>
 
+#if !defined(_hui_controls_)
 
 HUI_WebView HUI_WebView_create (){
 	return new HUI::WebView();
@@ -395,7 +396,8 @@ void        HUI_WebView_exit (){
 	HUI::WebView::exit();
 }
 
-
+#endif
+#if !defined(_hui_webview_)
 
 HUI_WindowControls HUI_WindowControls_create (void* backend, void* handle){
 	return new HUI::WindowControls(backend, handle);
@@ -473,6 +475,8 @@ void        HUI_WindowControls_set_input_mode_keyboard (HUI_WindowControls objec
 HUI_WindowInputMode     HUI_WindowControls_get_input_mode_keyboard (HUI_WindowControls object){
 	return static_cast<HUI::WindowControls*>(object)->get_input_mode_keyboard();
 }
+
+#endif
 
 
 #ifdef __cplusplus

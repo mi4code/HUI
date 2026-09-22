@@ -25,7 +25,10 @@ jobs:
           ./build_linux_gtk3.sh --dependencies --deploy --tests
           cd HUI-linux-x86_64-webkit-gtk3
           python3 ../python/build.py
-
+          
+      - name: Check build artifacts
+        run: |
+          [ -f ./HUI-*/libHUI.so ] || { echo "missing libHUI.so"; exit 1; }
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -58,7 +61,14 @@ jobs:
           ./build_win_cef.bat --dependencies --deploy --tests
           cd HUI-win-AMD64-blink-cef
           python ../python/build.py
-
+          
+      - name: Check build artifacts
+        shell: cmd
+        run: |
+          for /d %%D in (HUI-*) do if exist "%%D\libHUI.dll" exit /b 0
+          echo missing libHUI.dll
+          exit /b 1
+          
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:

@@ -19,7 +19,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 # Add source files
 #  we are at hui/build
-set(SOURCE_FILES ../hui_webview__blink_cef.cc)
+set(SOURCE_FILES ../hui_webview__blink_cef.cc ../hui_windowcontrols__dummy.cc)
 
 # Add executable target
 #add_executable(PlibHUI ${SOURCE_FILES})

@@ -22,7 +22,7 @@ cd $BUILD
 ## Build
 
 # build with simple g++
-g++ -shared -fPIC -o ./libHUI.dll ../hui_webview__dummy.cc -I..
+g++ -shared -fPIC -o ./libHUI.dll ../hui_webview__dummy.cc ..\hui_controls__dummy.cc -I..
 
 
 ## Deploy

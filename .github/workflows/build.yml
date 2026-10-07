@@ -1,7 +1,9 @@
 name: Build HUI
 
 on:
-  workflow_dispatch:   # Allows manual trigger
+  workflow_dispatch:
+  pull_request:
+  push:
 
 jobs:
 

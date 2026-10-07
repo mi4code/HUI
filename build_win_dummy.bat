@@ -32,7 +32,7 @@ REM Build
 call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
 
 :: build
-cl /LD /EHsc /D"and=&" /Fe:libHUI.dll ..\hui_webview__dummy.cc
+cl /LD /EHsc /D"and=&" /Fe:libHUI.dll ..\hui_webview__dummy.cc ..\hui_controls__dummy.cc 
 
 :: create definiton file (dumpbin output edited to be "EXPORTS \n HUI_<list of all methods> \n ...") - its easier to have the file prepared and just copy it
 ::dumpbin.exe /EXPORTS HUI.dll > HUI.def

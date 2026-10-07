@@ -27,7 +27,7 @@ cd $BUILD
 ## Build
 
 # build
-g++ -shared -fPIC -o ./libHUI.so ../hui_webview__webkit_qt5.cc -I.. `pkg-config --cflags --libs Qt5Widgets Qt5WebKitWidgets`
+g++ -shared -fPIC -o ./libHUI.so ../hui_webview__webkit_qt5.cc ../hui_windowcontrols__qt5.cc -I.. `pkg-config --cflags --libs Qt5Widgets Qt5WebKitWidgets`
 
 # TODO: qmake *.moc
 

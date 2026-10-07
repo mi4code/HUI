@@ -1,4 +1,13 @@
-// NOW, THIS JUST CODE APPENDED TO WEBVIEW 
+#ifndef _hui_controls_
+#define _hui_controls_
+
+
+#include "HUI.hh"
+
+#include <iostream>
+
+
+namespace HUI {
 
 struct WindowControls::pImpl {};
 
@@ -80,3 +89,7 @@ WindowInputMode WindowControls::get_input_mode_keyboard() {
     std::cout<<"WindowControls::get_input_mode_keyboard"<<"\n";
     return 0;
 }
+
+
+} // HUI
+#endif // _hui_controls_

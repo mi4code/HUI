@@ -1,5 +1,5 @@
-#ifndef _hui_backend_
-#define _hui_backend_
+#ifndef _hui_webview_
+#define _hui_webview_
 
 #include <ciso646>
 
@@ -469,8 +469,6 @@ void WebView::exit() {
 }
 
 
-#include "./hui_windowcontrols__dummy.cc"
-
 } // HUI
 
-#endif // _hui_backend_
+#endif // _hui_webview_

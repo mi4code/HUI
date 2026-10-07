@@ -1,5 +1,5 @@
-#ifndef _hui_backend_
-#define _hui_backend_
+#ifndef _hui_webview_
+#define _hui_webview_
 
 #define _hui_webview_use_common_code
 #include "HUI.hh"
@@ -10,7 +10,6 @@
 #include <gdk/gdkx.h>
 #include <gdk/gdkwayland.h>
 #include <webkit2/webkit2.h>
-#include <gtk-layer-shell.h>
 #include <iostream>
 
 
@@ -266,8 +265,6 @@ void WebView::exit (){
 }
 
 
-#include "./hui_windowcontrols__gtk3.cc"
-
-
 } // HUI
-#endif // _hui_backend_
+
+#endif // _hui_webview_

@@ -14,7 +14,7 @@ namespace HUI {
 
 
 class 
-  #if defined(_hui_backend_) && !defined(_MSC_VER) 
+  #if defined(_hui_webview_) && !defined(_MSC_VER) 
   __attribute__((visibility("hidden"))) // hides C++ functions from dynamic library
   #endif
   WebView {
@@ -44,7 +44,7 @@ class
 
 	// TODO: implicitly convert to c backend pointer if possible (shouldnt be member) 
 
-	#if !defined(_hui_backend_)
+	#if !defined(_hui_webview_)
 	private:  // private when used as header (used when building backends - thats the only time you know whats really inside)
 	#endif
       //friend class WindowControls;
@@ -61,7 +61,7 @@ typedef HUI_WindowState WindowState;
 typedef HUI_WindowGeometry WindowGeometry; // TODO: C++ (not possible in C) union aliases (x,y,w,h) and default values (-1)
 typedef HUI_WindowInputMode WindowInputMode;
 class 
-  #if defined(_hui_backend_) && !defined(_MSC_VER) 
+  #if defined(_hui_controls_) && !defined(_MSC_VER) 
   __attribute__((visibility("hidden"))) // hides C++ functions from dynamic library
   #endif
   WindowControls {
@@ -98,7 +98,9 @@ class
 	  
 	  // TODO: callback for each of these (there should be some easy way to set/unset them; consider one callback vs. multiple)
 
-    private: 
+	#if !defined(_hui_controls_)
+	private:  // private when used as header (used when building backends - thats the only time you know whats really inside)
+	#endif
 	  struct pImpl;
 	  std::unique_ptr<pImpl> impl; 
 	  
@@ -108,7 +110,7 @@ class
 } // HUI
 
 
-#if !defined(_hui_backend_) && !defined(_hui_controls_) && !defined(_hui_webview_)  // C API -> C++ API (used when including the library)
+#if !defined(_hui_controls_) && !defined(_hui_webview_)  // C API -> C++ API (used when including the library)
 
 namespace HUI {
 
@@ -295,10 +297,10 @@ WindowInputMode WindowControls::get_input_mode_keyboard() {
 
 } // HUI
 
-#endif // _hui_backend_
+#endif // !defined(_hui_backend_)
 
 
-#if defined(_hui_backend_) || defined(_hui_webview_) || defined(_hui_controls_)  // C++ API -> C API (used when building the library)
+#if defined(_hui_webview_) || defined(_hui_controls_)  // C++ API -> C API (used when building the library)
 
 
 #ifdef __cplusplus
@@ -484,7 +486,7 @@ HUI_WindowInputMode     HUI_WindowControls_get_input_mode_keyboard (HUI_WindowCo
 #endif
 
 
-#endif
+#endif // defined(_hui_controls_)
 
 
 #if defined(_hui_webview_use_common_code)

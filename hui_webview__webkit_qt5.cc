@@ -1,5 +1,5 @@
-#ifndef _hui_backend_
-#define _hui_backend_
+#ifndef _hui_webview_
+#define _hui_webview_
 
 
 #define _hui_webview_use_common_code
@@ -12,8 +12,6 @@
 #include <QtWidgets/QDesktopWidget>
 #include <QtWebKitWidgets/QWebView>
 #include <QtWebKitWidgets/QWebFrame>
-//#include <LayerShellQt/Shell>  // TODO, will not be implemented any time soon because layer-shell-qt doesnt have pkg-config
-//#include <LayerShellQt/Window> 
 
 
 namespace HUI {
@@ -223,13 +221,10 @@ void WebView::exit (){
 	QCoreApplication::exit(0);
 }
 
-
-#include "./hui_windowcontrols__qt5.cc"
-
 #if !defined(HUI_BACKEND_QT5_building_moc)
   #include "qt5_generated.moc"
 #endif
 
 } // HUI
 
-#endif // _hui_backend_
+#endif // _hui_webview_

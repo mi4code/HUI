@@ -65,7 +65,8 @@ class Str : private std::string {
     
 	using std::string::string;
 	
-	//Str (auto value) : std::string (value) {} 
+	//Str (auto value) : std::string (value) {}
+	Str ()                         : std::string () {}
 	Str (std::string value)        : std::string (value) {}
 	Str (const char value)         : std::string ({value}) {}
 	Str (int value)                : std::string (std::to_string(value)) {} 

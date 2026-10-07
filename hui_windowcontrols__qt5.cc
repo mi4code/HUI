@@ -1,4 +1,20 @@
-// NOW, THIS JUST CODE APPENDED TO WEBVIEW 
+#ifndef _hui_controls_
+#define _hui_controls_
+
+
+#include "HUI.hh"
+
+#include "./hui_datatypes.h"
+#include <fstream>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QDesktopWidget>
+#include <QtWebKitWidgets/QWebView>
+#include <QtWebKitWidgets/QWebFrame>
+//#include <LayerShellQt/Shell>  // TODO, will not be implemented any time soon because layer-shell-qt doesnt have pkg-config
+//#include <LayerShellQt/Window> 
+
+
+namespace HUI {
 
 struct WindowControls::pImpl {
 	QWidget** window = NULL;
@@ -202,3 +218,7 @@ WindowInputMode WindowControls::get_input_mode_keyboard(){
 	else return WIM_AUTO_WINDOW;
 	// return WIM_ALWAYS // TODO
 }
+
+
+} // HUI
+#endif // _hui_controls_

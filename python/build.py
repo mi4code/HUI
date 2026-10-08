@@ -14,7 +14,7 @@ if system == "Windows":
         print("installing dependencies...")
         os.system("pacman -S --noconfirm --needed mingw-w64-x86_64-pybind11")
         print("running build...")
-        os.system('bash -c "g++ -O3 -shared -fPIC ../python/hui_python.cc -o HUI$(python3-config --extension-suffix) -I.. -L. -lHUI $(python3 -m pybind11 --includes) -lpython'+str(sys.version_info.major)+'.'+str(sys.version_info.minor)+'"')  # '-lpython3.12' needed to avoid 'undefined reference to'
+        os.system('bash -c "g++ -O3 -shared -fPIC ../python/hui_python.cc -o HUI$(python3-config --extension-suffix) -I../{c,c++} -L. -lHUI $(python3 -m pybind11 --includes) -lpython'+str(sys.version_info.major)+'.'+str(sys.version_info.minor)+'"')  # '-lpython3.12' needed to avoid 'undefined reference to'
         
     else:
         print("building on windows (msvc)...")
@@ -27,7 +27,7 @@ if system == "Windows":
         pyname = "python"+str(sys.version_info.major)+str(sys.version_info.minor)  # python312
         suffix = sysconfig.get_config_var('EXT_SUFFIX')  # .cp312-win_amd64.pyd
         #os.system("call \"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"  &&  cl /LD /EHsc /O2 /Fe:HUI"+suffix+" ../python/hui_python.cc "+includes+" /I\"..\" /link /LIBPATH:\""+libpath+"\\libs"+"\" "+pyname+".lib libHUI.lib")
-        os.system("cl /LD /EHsc /O2 /Fe:HUI"+suffix+" ../python/hui_python.cc "+includes+" /I\"..\" /link /LIBPATH:\""+libpath+"\\libs"+"\" "+pyname+".lib libHUI.lib")
+        os.system("cl /LD /EHsc /O2 /Fe:HUI"+suffix+" ../python/hui_python.cc "+includes+" /I\"..\\c\" /I\"..\\c++\" /link /LIBPATH:\""+libpath+"\\libs"+"\" "+pyname+".lib libHUI.lib")
         
     print("done")
 
@@ -48,7 +48,7 @@ elif system == "Linux":
         print("unknown linux distro, hope you have everything installed...")
         
     print("running build...")
-    os.system("g++ -O3 -shared -fPIC ../python/hui_python.cc -o HUI$(python3-config --extension-suffix) -I.. -L. -lHUI $(python3 -m pybind11 --includes)")
+    os.system("g++ -O3 -shared -fPIC ../python/hui_python.cc -o HUI$(python3-config --extension-suffix) -I../{c,c++} -L. -lHUI $(python3 -m pybind11 --includes)")
     print("done")
 
 

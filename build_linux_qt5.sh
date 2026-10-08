@@ -27,7 +27,7 @@ cd $BUILD
 ## Build
 
 # build
-g++ -shared -fPIC -o ./libHUI.so ../hui_webview__webkit_qt5.cc ../hui_windowcontrols__qt5.cc -I.. `pkg-config --cflags --libs Qt5Widgets Qt5WebKitWidgets`
+g++ -shared -fPIC -o ./libHUI.so ../hui_webview__webkit_qt5.cc ../hui_windowcontrols__qt5.cc -I../{c,c++} `pkg-config --cflags --libs Qt5Widgets Qt5WebKitWidgets`
 
 # TODO: qmake *.moc
 
@@ -43,7 +43,7 @@ fi
 ## Tests
 if [[ " $@ " =~ " --tests " ]]; then
 	# build tests
-	g++ -o test_webview_js_api ../tests/test_webview_js_api.cc -I.. -L. -lHUI
+	g++ -o test_webview_js_api ../tests/test_webview_js_api.cc -I../{c,c++} -L. -lHUI
 fi
 
 

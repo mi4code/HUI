@@ -4,7 +4,7 @@
 
 #include "HUI.hh"
 
-#include "./hui_datatypes.h"
+#include "hui_datatypes.h"
 #include <fstream>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QDesktopWidget>

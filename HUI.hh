@@ -486,7 +486,7 @@ HUI_WindowInputMode     HUI_WindowControls_get_input_mode_keyboard (HUI_WindowCo
 #endif
 
 
-#endif // defined(_hui_controls_)
+#endif // defined(_hui_backend_)
 
 
 #if defined(_hui_webview_use_common_code)

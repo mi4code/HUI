@@ -91,7 +91,7 @@ REM Tests
 if not "%ARGS%" == "%ARGS: --tests =%" (
 	
 	:: build tests
-	cl /EHsc /Fe:test_webview_js_api.exe ../tests/test_webview_js_api.cc  /I.. /link /LIBPATH:. libHUI.lib
+	cl /EHsc /Fe:test_webview_js_api.exe ../tests/test_webview_js_api.cc /I..\c /I..\c++ /link /LIBPATH:. libHUI.lib
 	
 )
 

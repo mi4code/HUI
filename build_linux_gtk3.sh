@@ -45,7 +45,7 @@ fi
 ## Tests
 if [[ " $@ " =~ " --tests " ]]; then
 	# build tests
-	g++ -o test_webview_js_api ../tests/test_webview_js_api.cc -I.. -L. -lHUI
+	g++ -o test_webview_js_api ../tests/test_webview_js_api.cc -I../{c,c++} -L. -lHUI
 fi
 
 

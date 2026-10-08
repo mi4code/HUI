@@ -4,7 +4,7 @@
 #define _hui_webview_use_common_code
 #include "HUI.hh"
 
-#include "./hui_datatypes.h"
+#include "hui_datatypes.h"
 #include <fstream>
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>

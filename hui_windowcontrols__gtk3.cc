@@ -4,7 +4,7 @@
 
 #include "HUI.hh"
 
-#include "./hui_datatypes.h"
+#include "hui_datatypes.h"
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 #include <gdk/gdkwayland.h>

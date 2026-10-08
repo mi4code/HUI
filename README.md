@@ -140,22 +140,22 @@ closereq (only thing really missing, will need to figure out how to deal with mu
 Linux or MinGW `g++` (C++):
 ```
 cd build
-g++ -o <binary> ../<source> -I../../HUI -L. -lHUI
+g++ -o <binary> ../<source> -I../../HUI/{c,c++} -L. -lHUI
 ```
 Linux or MinGW `gcc` (C):
 ```
 cd build
-gcc -o <binary> ../<source> -I../../HUI -L. -lHUI
+gcc -o <binary> ../<source> -I../../HUI/c -L. -lHUI
 ```
 Windows MSVC `cl.exe` (C++):
 ```
 cd build
-cl /EHsc /Fe:<binary>.exe ../<source> /I../../HUI /link /LIBPATH:. libHUI.lib
+cl /EHsc /Fe:<binary>.exe ../<source> /I../../HUI/c /I../../HUI/c++ /link /LIBPATH:. libHUI.lib
 ```
 Windows MSVC `cl.exe` (C):
 ```
 cd build
-cl /Fe:<binary>.exe ../<source> /I../../HUI /link /LIBPATH:. libHUI.lib
+cl /Fe:<binary>.exe ../<source> /I../../HUI/c /link /LIBPATH:. libHUI.lib
 ```
 Rust (first, copy your project into HUI root):
 ```
@@ -229,7 +229,7 @@ HUI 'newnew' - attempt to reimplement HUI from beginning \
 
 - [ ] single master build script for everything + make it possible to combine windowcontrols/webview/windowembeder in different languages at linkage time
 - [ ] debug control flag/rust --debug/release
-- [ ] c, cpp, rust, python bindings in own directories
+- [x] c, cpp, rust, python bindings in own directories
 - [ ] put backends in own directories + make it possible to build webview and controls separately
 - [ ] handle hui.js and hui.css as define/text replace (so we dont need quoting)
 - [ ] create master build script that calls others + build scripts directory + release naming ( HUI-{platform}-{backend}_{version or commit hash}_{more info} )

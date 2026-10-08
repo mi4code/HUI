@@ -27,7 +27,7 @@ cd $BUILD
 ## Build
 
 # build with simple g++
-g++ -shared -fPIC -o ./libHUI.dll ../hui_webview__webkit_qt5.cc ../hui_windowcontrols__qt5.cc -I.. `pkg-config --cflags --libs Qt5Widgets Qt5WebKitWidgets`
+g++ -shared -fPIC -o ./libHUI.dll ../hui_webview__webkit_qt5.cc ../hui_windowcontrols__qt5.cc -I../{c,c++} `pkg-config --cflags --libs Qt5Widgets Qt5WebKitWidgets`
 
 
 ## Deploy
@@ -54,7 +54,7 @@ if [[ " $@ " =~ " --tests " ]]; then
 	#ldd <your_executable> | grep -vE /c/WINDOWS\|System32\|SYSTEM32 | awk '{print $3}' | xargs -I {} sh -c '[ -f {} ] && cp {} .'
 
 	# build tests
-	g++ -o test_webview_js_api.exe ../tests/test_webview_js_api.cc -I.. -L. -lHUI
+	g++ -o test_webview_js_api.exe ../tests/test_webview_js_api.cc -I../{c,c++} -L. -lHUI
 	
 fi
 

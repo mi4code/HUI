@@ -47,6 +47,8 @@ foreach(flag_var
 endforeach()
 
 # Additional include and link directories
+include_directories(../c)
+include_directories(../c++)
 include_directories(${CEF_ROOT}/include)
 include_directories(${CEF_ROOT})
 

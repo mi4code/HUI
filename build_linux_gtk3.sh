@@ -29,9 +29,9 @@ cd $BUILD
 ## Build
 
 # build
-g++ -fPIC -c -o ./libHUIwebview.o ../hui_webview__webkit_gtk3.cc -I.. `pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1`
-g++ -fPIC -c -o ./libHUIcontrols.o ../hui_windowcontrols__gtk3.cc -I.. `pkg-config --cflags --libs gtk+-3.0 gtk-layer-shell-0`
-g++ -shared -fPIC -o ./libHUI.so ./libHUIwebview.o ./libHUIcontrols.o -I.. `pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1 gtk-layer-shell-0`
+g++ -fPIC -c -o ./libHUIwebview.o ../hui_webview__webkit_gtk3.cc -I../{c,c++} `pkg-config --cflags gtk+-3.0 webkit2gtk-4.1`
+g++ -fPIC -c -o ./libHUIcontrols.o ../hui_windowcontrols__gtk3.cc -I../{c,c++} `pkg-config --cflags gtk+-3.0 gtk-layer-shell-0`
+g++ -shared -fPIC -o ./libHUI.so ./libHUIwebview.o ./libHUIcontrols.o `pkg-config --libs gtk+-3.0 webkit2gtk-4.1 gtk-layer-shell-0`
 
 
 ## Deploy

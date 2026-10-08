@@ -29,7 +29,7 @@ cd $BUILD
 ## Build
 
 # build
-g++ -shared -fPIC -o ./libHUI.so ../hui_webview__dummy.cc ../hui_controls__dummy.cc -I..
+g++ -shared -fPIC -o ./libHUI.so ../hui_webview__dummy.cc ../hui_controls__dummy.cc -I../{c,c++}
 
 
 ## Deploy
@@ -43,7 +43,7 @@ fi
 ## Tests
 if [[ " $@ " =~ " --tests " ]]; then
 	# build tests
-	g++ -o test_webview_js_api ../tests/test_webview_js_api.cc -I.. -L. -lHUI
+	g++ -o test_webview_js_api ../tests/test_webview_js_api.cc -I../{c,c++} -L. -lHUI
 fi
 
 

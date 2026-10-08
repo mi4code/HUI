@@ -22,7 +22,7 @@
 #endif
 
 
-#if defined(_MSC_VER) && defined(_hui_backend_)
+#if defined(_MSC_VER) && (defined(_hui_webview_) || defined(_hui_controls_))
   #define MSVC_DLL __declspec(dllexport)
 #else
   #define MSVC_DLL

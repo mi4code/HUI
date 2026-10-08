@@ -40,7 +40,7 @@ cd $BUILD
 ## Build
 
 # build with simple g++
-g++ -shared -fPIC -o ./libHUI.dll ../hui_webview__dummy.cc ../hui_controls__dummy.cc -I..
+g++ -shared -fPIC -o ./libHUI.dll ../hui_webview__dummy.cc ../hui_controls__dummy.cc -I../{c,c++}
 
 
 ## Deploy
@@ -60,7 +60,7 @@ if [[ " $@ " =~ " --tests " ]]; then
 	#ldd <your_executable> | grep -vE /c/WINDOWS\|System32\|SYSTEM32 | awk '{print $3}' | xargs -I {} sh -c '[ -f {} ] && cp {} .'
 
 	# build tests
-	g++ -o test_webview_js_api.exe ../tests/test_webview_js_api.cc -I.. -L. -lHUI
+	g++ -o test_webview_js_api.exe ../tests/test_webview_js_api.cc -I../{c,c++} -L. -lHUI
 	
 fi
 

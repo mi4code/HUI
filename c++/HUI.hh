@@ -143,7 +143,7 @@ void WebView::hui_tweaks (){
 std::string WebView::call_js (std::string code, bool return_data){
 	auto cstr = HUI_WebView_call_js (impl->pointer, code.c_str(), return_data);
 	auto str = std::string(cstr);
-	delete[] cstr;
+	HUI_WebView_cstring_free(cstr);
 	return str;
 }
 void WebView::call_js (std::string code, std::function<void(std::string)> return_callback){
@@ -169,20 +169,20 @@ std::string WebView::call_native (std::function<void(std::vector<std::string>)> 
 	auto cstr = HUI_WebView_call_native (impl->pointer, handler_c, handler_ptr, process_args.c_str());
 
 	auto str = std::string(cstr);
-	delete[] cstr;
+	HUI_WebView_cstring_free(cstr);
 	return str;
 }
 std::string WebView::html_element (std::string query, std::string property, std::string value){
 	auto cstr =HUI_WebView_html_element (impl->pointer, query.c_str(), property.c_str(), value.c_str());
 	auto str = std::string(cstr);
-	delete[] cstr;
+	HUI_WebView_cstring_free(cstr);
 	return str;
 }
 
 std::string WebView::backend_name (){
 	auto cstr = HUI_WebView_backend_name (impl->pointer);
 	auto str = std::string(cstr);
-	delete[] cstr;
+	HUI_WebView_cstring_free(cstr);
 	return str;
 }
 void* WebView::backend_object (){
@@ -192,7 +192,7 @@ void* WebView::backend_object (){
 std::string WebView::window_type (){
 	auto cstr = HUI_WebView_window_type (impl->pointer);
 	auto str = std::string(cstr);
-	delete[] cstr;
+	HUI_WebView_cstring_free(cstr);
 	return str;
 }
 void* WebView::window_handle (){
@@ -259,7 +259,7 @@ void WindowControls::set_title(std::string title) {
 std::string WindowControls::get_title() {
     auto cstr = HUI_WindowControls_get_title(impl->pointer);
     auto str = std::string(cstr);
-    delete[] cstr;
+    HUI_WindowControls_cstring_free(cstr);
     return str;
 }
 
@@ -269,7 +269,7 @@ void WindowControls::set_id(std::string id) {
 std::string WindowControls::get_id() {
     auto cstr = HUI_WindowControls_get_id(impl->pointer);
     auto str = std::string(cstr);
-    delete[] cstr;
+    HUI_WindowControls_cstring_free(cstr);
     return str;
 }
 
@@ -311,6 +311,7 @@ extern "C" {
 #include "HUI.h"
 #include <cstring>
 
+
 #if !defined(_hui_controls_)
 
 HUI_WebView HUI_WebView_create (){
@@ -318,6 +319,9 @@ HUI_WebView HUI_WebView_create (){
 }
 void        HUI_WebView_destroy (HUI_WebView object){
 	delete static_cast<HUI::WebView*>(object);
+}
+void        HUI_WebView_cstring_free (const char* cstr){
+	delete[] cstr;
 }
 
 void        HUI_WebView_load_file (HUI_WebView object, const char* file){
@@ -335,7 +339,7 @@ void        HUI_WebView_hui_tweaks (HUI_WebView object){
 
 const char* HUI_WebView_call_js (HUI_WebView object, const char* code, bool return_data){ 
 	auto str = static_cast<HUI::WebView*>(object)->call_js(code, return_data);
-	char* cstr = new char[str.size() + 1]; // from <https://stackoverflow.com/a/22330685/21213243>, its important to call delete
+	char* cstr = new char[str.size() + 1]; // from <https://stackoverflow.com/a/22330685/21213243>, its important to call HUI_WebView_cstring_free
 	strcpy(cstr, str.c_str());
 	return cstr;
 }
@@ -355,20 +359,20 @@ const char* HUI_WebView_call_native (HUI_WebView object, void(*handler)(char**,i
 		handler(&c_args[0], c_args.size(),data); //segfault (if handler captured by reference as &handler)
 	};
 	auto str = static_cast<HUI::WebView*>(object)->call_native(cpp_handler, process_args);
-	char* cstr = new char[str.size() + 1]; // from <https://stackoverflow.com/a/22330685/21213243>, its importent to call delete
+	char* cstr = new char[str.size() + 1]; // from <https://stackoverflow.com/a/22330685/21213243>, its importent to call HUI_WebView_cstring_free
 	strcpy(cstr, str.c_str());
 	return cstr;
 }
 const char* HUI_WebView_html_element (HUI_WebView object, const char* query, const char* property, const char* value){
 	auto str = static_cast<HUI::WebView*>(object)->html_element(query, property, value);
-	char* cstr = new char[str.size() + 1]; // from <https://stackoverflow.com/a/22330685/21213243>, its importent to call delete
+	char* cstr = new char[str.size() + 1]; // from <https://stackoverflow.com/a/22330685/21213243>, its importent to call HUI_WebView_cstring_free
 	strcpy(cstr, str.c_str());
 	return cstr;
 }
 
 const char* HUI_WebView_backend_name (HUI_WebView object){ 
 	auto str = static_cast<HUI::WebView*>(object)->backend_name();
-	char* cstr = new char[str.size() + 1]; // from <https://stackoverflow.com/a/22330685/21213243>, its important to call delete
+	char* cstr = new char[str.size() + 1]; // from <https://stackoverflow.com/a/22330685/21213243>, its important to call HUI_WebView_cstring_free
 	strcpy(cstr, str.c_str());
 	return cstr;
 }
@@ -377,7 +381,7 @@ void*       HUI_WebView_backend_object (HUI_WebView object){
 }
 const char* HUI_WebView_window_type (HUI_WebView object){ 
 	auto str = static_cast<HUI::WebView*>(object)->window_type();
-	char* cstr = new char[str.size() + 1]; // from <https://stackoverflow.com/a/22330685/21213243>, its important to call delete
+	char* cstr = new char[str.size() + 1]; // from <https://stackoverflow.com/a/22330685/21213243>, its important to call HUI_WebView_cstring_free
 	strcpy(cstr, str.c_str());
 	return cstr;
 }
@@ -407,6 +411,9 @@ HUI_WindowControls HUI_WindowControls_create (void* backend, void* handle){
 }
 void        HUI_WindowControls_destroy (HUI_WindowControls object){
 	delete static_cast<HUI::WindowControls*>(object);
+}
+void        HUI_WindowControls_cstring_free (const char* cstr){
+	delete[] cstr;
 }
 
 void        HUI_WindowControls_set_type (HUI_WindowControls object, HUI_WindowType type){

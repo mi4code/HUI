@@ -38,6 +38,7 @@ typedef void* HUI_WebView;
 
 MSVC_DLL HUI_WebView HUI_WebView_create ();
 MSVC_DLL void        HUI_WebView_destroy (HUI_WebView object);
+MSVC_DLL void        HUI_WebView_cstring_free (const char* cstr);
 
 MSVC_DLL void        HUI_WebView_load_file (HUI_WebView object, const char* file);
 MSVC_DLL void        HUI_WebView_load_uri (HUI_WebView object, const char* uri);
@@ -71,6 +72,7 @@ typedef void* HUI_WindowControls;
 
 MSVC_DLL HUI_WindowControls HUI_WindowControls_create (void* backend, void* handle);
 MSVC_DLL void        HUI_WindowControls_destroy (HUI_WindowControls object);
+MSVC_DLL void        HUI_WindowControls_cstring_free (const char* cstr);
 
 typedef uint8_t HUI_WindowType;
 #define WT_TOPLEVEL_SSD 0

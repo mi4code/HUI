@@ -47,7 +47,6 @@ class
 	#if !defined(_hui_webview_)
 	private:  // private when used as header (used when building backends - thats the only time you know whats really inside)
 	#endif
-      //friend class WindowControls;
 	  struct pImpl;
 	  std::unique_ptr<pImpl> impl; 
 };
@@ -217,7 +216,7 @@ struct WindowControls::pImpl {
     HUI_WindowControls pointer;
 };
 
-WindowControls::WindowControls(void* backend, void* handle) { // doesnt work when use is of type WebView (may be type mismatch (expected to be backend type BUT its bundings type -- but still strange because it should have been link compatible)
+WindowControls::WindowControls(void* backend, void* handle) { // doesnt work when use is of type WebView (may be type mismatch (expected to be backend type BUT its bindings type -- but still strange because it should have been link compatible)
 	impl = std::make_unique<pImpl>();
     impl->pointer = HUI_WindowControls_create(backend, handle);
 }
@@ -346,7 +345,7 @@ const char* HUI_WebView_call_js (HUI_WebView object, const char* code, bool retu
 void        HUI_WebView_call_js_async (HUI_WebView object, const char* code, void(*return_callback)(const char*, void*), void* data){
 	auto cpp_callback = [data,return_callback](std::string arg)->void{
 		const char* c_arg = const_cast<const char*>(arg.c_str());
-		return_callback(c_arg,data); //segfault (if handler captured by reference as &handler)
+		return_callback(c_arg,data); // segfault (if handler captured by reference as &handler)
 	};
 	static_cast<HUI::WebView*>(object)->call_js(code, cpp_callback);
 }
@@ -356,7 +355,7 @@ const char* HUI_WebView_call_native (HUI_WebView object, void(*handler)(char**,i
 		std::vector<char*> c_args;
 		c_args.reserve(args.size());
 		for(size_t i = 0; i < args.size(); ++i) c_args.push_back(const_cast<char*>(args[i].c_str()));
-		handler(&c_args[0], c_args.size(),data); //segfault (if handler captured by reference as &handler)
+		handler(&c_args[0], c_args.size(),data); // segfault (if handler captured by reference as &handler)
 	};
 	auto str = static_cast<HUI::WebView*>(object)->call_native(cpp_handler, process_args);
 	char* cstr = new char[str.size() + 1]; // from <https://stackoverflow.com/a/22330685/21213243>, its importent to call HUI_WebView_cstring_free
@@ -502,78 +501,24 @@ HUI_WindowInputMode     HUI_WindowControls_get_input_mode_keyboard (HUI_WindowCo
 namespace HUI {
 	
 std::string WebView::html_element (std::string query, std::string property, std::string value){
+	// TODO: properly escape `
+	// TODO: overload value type and auto-quote strings
 	if (property == "" and value == ""){ // create element
-		// user should do outerHTML manually
+		// user should do outerHTML manually (create template element, set outerHTML, add the element to DOM)
 		// parent must already exist, the rest should be only tag#id.class.another[attr=val][another="val"][prop='val']
 		call_js( std::string()+"HUI.html_element_create(`"+query+"`)", false );
 		return "";
 	}
 	else if (value == "") { // get value or call 
 		// query must be unique to get value
-		return call_js( std::string()+"(function(){ let q = document.querySelectorAll('"+query+"'); if (q.length == 1) {return q[0]."+property+";} else {q.forEach(function(e){e."+property+";}); return '<hui_error: query not unique>';} })();", true );
+		return call_js( std::string()+"(function(){ let q = document.querySelectorAll(`"+query+"`); if (q.length == 1) {return q[0]."+property+";} else {q.forEach(function(e){e."+property+";}); return '<hui_error: query not unique>';} })();", true );
 	}
 	else { // set value
-		call_js( std::string()+"(function(){  let q = document.querySelectorAll('"+query+"'); if (q.length == 1) {q[0]."+property+" = "+value+";} else {q.forEach(function(e){e."+property+" = "+value+";});}  })()", false );
+		// no return here
+		call_js( std::string()+"(function(){  let q = document.querySelectorAll(`"+query+"`); if (q.length == 1) {q[0]."+property+" = "+value+";} else {q.forEach(function(e){e."+property+" = "+value+";});}  })()", false );
 		return "";
 	}
-	
-	/*
-
-// no return when value has value
-// if you want element from html string: use outerHTML + run all scripts
-// query may contain ':nth-of-type(...)' to distinguish between similar elements ('querySelector' is always faster than 'querySelectorAll')
-
-TESTS PERFORMED TO FIND BEST APPROACH:
-
-tested with: <https://jsbench.me>
-
----
-
-<html>
-<body>
-<div style="color: red;"></div>
-<button>
-<div></div>
-<div></div>
-<div></div>
-<p></p>
-<p></p>
-<div></div>
-</body>
-</html>
- [TEST SETUP]
-
----
-
-document.querySelectorAll("body div:nth-of-type(3)").forEach(function(e){e.innerText = "e";})
- [261 tis. ops/s ± 6.61% ~ 15.62 % slower]
-
-(function(e){e.innerText = "e";})(document.querySelectorAll("body div")[2])
- [299 tis. ops/s ± 1.55% ~ 3.39 % slower]
- 
-document.querySelectorAll("body div")[2].innerText = "e";
- [303 tis. ops/s ± 2.73% ~ Fastest]
- 
-let q = document.querySelectorAll("body div:nth-of-type(3)");
-if (q.length == 1) {q[0].innerText = "e";}
-else {q.forEach(function(e){e.innerText = "e";})}
- [309 tis. ops/s ± 1.07% ~ Fastest]
-
----
-
-document.querySelectorAll("body div").forEach(function(e){e.innerText = "e";})
- [308 tis. ops/s ± 2.95% ~ 18.12 % slower]
- 
-let q = document.querySelectorAll("body div");
-if (q.length == 1) {q[0].innerText = "e";}
-else {q.forEach(function(e){e.innerText = "e";})}
- [377 tis. ops/s ± 2.9% ~ Fastest]
- 
- 
- 
- 
-*/
-
+	// note: query may contain ':nth-of-type(...)' to distinguish between similar elements ('querySelector' is always faster than 'querySelectorAll'), current code was tested with <https://jsbench.me> as fastest solution 
 }
 
 void WebView::call_js (std::string code, std::function<void(std::string)> return_callback) { // TODO: unify js api (this is just placeholder for backends using synchronous api)

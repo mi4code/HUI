@@ -16,53 +16,19 @@
  #else
   #include <unistd.h>
  #endif
- 
-/*
-#define HUI_PROPERTY (name, type, setter, getter, changecallbacksetter) \
-	void set_#name# (#type#& #name#) setter\
-	#type#& get_#name# () getter
-*/
-
-#define HUI_PROPERTY(/*TYPE,*/ NAME, SETTER, GETTER/*, CALLBACK*/) \
-	void set_##NAME(/*TYPE*/auto NAME)SETTER \
-	/*TYPE*/auto get_##NAME()GETTER 
-	/*void get_##NAME(TYPE& _return_value){ _return_value = [&]GETTER(); } \ 
-	void get_##NAME(TYPE* _return_value){ (*_return_value) = [&]GETTER(); }*/
-
-/*HUI_PROPERTY(
-	testprop, 
-	{
-		std::cout<<"_set_"<<testprop;
-	},
-	{
-		std::cout<<"_get_";
-		return 0;
-	}
-)*/
- 
 
  
 namespace HUI {
-	
-	
-	
-template<typename AUTO/*, class ALLOC = allocator<AUTO> */> class Vec : public std::vector<AUTO/*, ALLOC*/> {
-	// currently todo
-  public:
-	void operator+= (AUTO value) { std::vector<AUTO>::push_back(value); }
-	void operator+= (Vec value) { for (auto i : value) std::vector<AUTO>::push_back(i); }
-};
 
 
- 
-// should not use cstring/const char* - its way more unsafe 
-// TODO: stream operators, ==, find by {list, of, substrings}, antifind
 class Str : private std::string {
+  // should not use cstring/const char* - its way more unsafe 
+  // TODO: stream operators, ==, find by {list, of, substrings}, antifind
+
   private:
 	//using std::string::operator[];
 	
   public: 
-    
 	using std::string::string;
 	
 	//Str (auto value) : std::string (value) {}
@@ -85,7 +51,7 @@ class Str : private std::string {
 			operator+= ( (*it)/*.cpp_str()*/ );	
 		}
 	}
-	Str (const Vec<Str> list, Str between=""){ // once more because cpp needs it
+	Str (const std::vector<Str> list, Str between=""){ // once more because cpp needs it
 		operator+= ( (*list.begin())/*.cpp_str()*/ );
 		for (auto it=list.begin()+1; it!=list.end(); ++it){
 			operator+= ( between/*.cpp_str()*/ );
@@ -128,8 +94,6 @@ class Str : private std::string {
 	using std::string::c_str;
 	
 	using std::string::size;
-	
-
 	
 	//char part (size_t index) {return data.at(index);} // ready for time when return type overloading becomes possible
 	//void part (...) {...} // change its the value 
@@ -192,9 +156,9 @@ class Str : private std::string {
 	//void replace (Vec<Str> old, HTUIstring new){}
 	//void replace (std::map<Str,Str> pairs){} // encrypt by key -> can be used to do uppercase/lowercase conversion
 
-	Vec<Str> split (Str separator) const {
+	std::vector<Str> split (Str separator) const {
 		
-		Vec<Str> return_vec;
+		std::vector<Str> return_vec;
 		size_t level = 0; // position in old_str
 		size_t startp = 0; // first position after last replace
 		
@@ -240,8 +204,6 @@ inline std::istream& operator>>(std::istream& stream, Str& s){
 	s = ss;
 	return stream;
 } 
-
-
 
 
 //const char[] CURRENT_DIR = // TODO: constants/preload
@@ -295,4 +257,24 @@ inline Str filepath(Str fn){
 #endif
 
 };
+
+
+/*
+#define HUI_PROPERTY(/.*TYPE,*./ NAME, SETTER, GETTER/.*, CALLBACK*./) \
+	void set_##NAME(/.*TYPE*./auto NAME)SETTER \
+	/.*TYPE*./auto get_##NAME()GETTER 
+
+HUI_PROPERTY(
+	testprop, 
+	{
+		std::cout<<"_set_"<<testprop;
+	},
+	{
+		std::cout<<"_get_";
+		return 0;
+	}
+)
+*/
+
+
 #endif // HUI_DATATYPES_H

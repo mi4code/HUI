@@ -20,6 +20,8 @@ PYBIND11_MODULE(HUI, m) {
 	
 	py::class_<WebView>(m, "WebView")
 		.def(py::init<>())
+		.def("__enter__", [](WebView &self) -> WebView& {return self;})
+		.def("__exit__", [](WebView &self, py::object, py::object, py::object) {self.~WebView();}) // TODO: self is owned by pybind11 so deleting it is likely to lead to double free
 		
 		.def("load_file", &WebView::load_file, py::arg("file"))
 		.def("load_uri", &WebView::load_uri, py::arg("uri"))
@@ -36,9 +38,9 @@ PYBIND11_MODULE(HUI, m) {
 		.def("window_type", &WebView::window_type)
 		.def("window_handle", &WebView::window_handle)
 		
-		.def("handle_forever", &WebView::handle_forever)
-		.def("handle_once", &WebView::handle_once)
-		.def("handle_threaded", &WebView::handle_threaded) // unsupported
+		.def_static("handle_forever", &WebView::handle_forever)
+		.def_static("handle_once", &WebView::handle_once)
+		.def_static("handle_threaded", &WebView::handle_threaded) // unsupported
 		.def("exit", &WebView::exit)
 		
 		;

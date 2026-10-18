@@ -128,8 +128,8 @@ MSVC_DLL const char* HUI_WindowControls_get_title (HUI_WindowControls object);
 MSVC_DLL void        HUI_WindowControls_set_id (HUI_WindowControls object, const char* id);
 MSVC_DLL const char* HUI_WindowControls_get_id (HUI_WindowControls object);
 
-MSVC_DLL void        HUI_WindowControls_set_exclusive_zone (HUI_WindowControls object, uint16_t zone);
-MSVC_DLL uint16_t    HUI_WindowControls_get_exclusive_zone (HUI_WindowControls object);
+MSVC_DLL void        HUI_WindowControls_set_exclusive_zone (HUI_WindowControls object, int16_t zone);
+MSVC_DLL int16_t     HUI_WindowControls_get_exclusive_zone (HUI_WindowControls object);
 
 MSVC_DLL void        HUI_WindowControls_set_focused (HUI_WindowControls object, bool activated);
 MSVC_DLL bool        HUI_WindowControls_get_focused (HUI_WindowControls object);

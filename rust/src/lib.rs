@@ -41,7 +41,15 @@ impl WebView {
     pub fn call_js(&self, code: &str, return_data: Option<bool>) -> String {
         let code_cstr = CString::new(code).expect("CString::new failed");
         let result = unsafe { HUI_WebView_call_js(self.pointer, code_cstr.as_ptr(), return_data.unwrap_or(false)) };
-        unsafe { CStr::from_ptr(result).to_string_lossy().into_owned() }
+        
+        if result.is_null() {
+            String::new()
+        }
+		else {
+			let string = unsafe { CStr::from_ptr(result).to_string_lossy().into_owned() };
+			unsafe { HUI_WebView_cstring_free(result); }
+			string
+		}
     }
 
 	pub fn call_js_async<F>(&self, code: &str, callback: F) where F: Fn(&str) + Send + Sync + 'static + Clone, {
@@ -68,7 +76,9 @@ impl WebView {
 		let result_str = if result.is_null() {
 			String::from("")
 		} else {
-			CStr::from_ptr(result).to_string_lossy().into_owned()
+			let string = CStr::from_ptr(result).to_string_lossy().into_owned();
+			HUI_WebView_cstring_free(result);
+			string
 		};
 
 		let recovered_thin_box: Box<*mut dyn Fn(&str)> = unsafe { Box::from_raw(data as *mut *mut dyn Fn(&str)) };  // cast *mut c_void back to Box<*mut dyn Fn()>
@@ -94,8 +104,11 @@ impl WebView {
 
         if result.is_null() {
             String::new()
-        } else {
-            unsafe { CStr::from_ptr(result).to_string_lossy().into_owned() }
+        }
+		else {
+			let string = unsafe { CStr::from_ptr(result).to_string_lossy().into_owned() };
+			unsafe { HUI_WebView_cstring_free(result); }
+			string
         }
     }
 
@@ -138,7 +151,9 @@ impl WebView {
             String::new()
         } 
 		else {
-            unsafe { CStr::from_ptr(result).to_string_lossy().into_owned() }
+			let string = unsafe { CStr::from_ptr(result).to_string_lossy().into_owned() };
+			unsafe { HUI_WebView_cstring_free(result); }
+			string
         }
     }
     unsafe extern "C" fn native_handler(args: *mut *mut c_char, len: i32, data: *mut c_void) {  // internal handler for js callbacks
@@ -186,7 +201,15 @@ impl WebView {
 
     pub fn backend_name(&self) -> String {
         let result = unsafe { HUI_WebView_backend_name(self.pointer) };
-        unsafe { CStr::from_ptr(result).to_string_lossy().into_owned() }
+        
+        if result.is_null() {
+            String::new()
+        }
+		else {
+			let string = unsafe { CStr::from_ptr(result).to_string_lossy().into_owned() };
+			unsafe { HUI_WebView_cstring_free(result); }
+			string
+		}
     }
 
     pub fn backend_object(&self) -> *mut c_void {
@@ -195,7 +218,15 @@ impl WebView {
 
     pub fn window_type(&self) -> String {
         let result = unsafe { HUI_WebView_window_type(self.pointer) };
-        unsafe { CStr::from_ptr(result).to_string_lossy().into_owned() }
+        
+        if result.is_null() {
+            String::new()
+        }
+		else {
+			let string = unsafe { CStr::from_ptr(result).to_string_lossy().into_owned() };
+			unsafe { HUI_WebView_cstring_free(result); }
+			string
+		}
     }
 
     pub fn window_handle(&self) -> *mut c_void {
@@ -232,6 +263,53 @@ unsafe impl Send for WebView {}
 unsafe impl Sync for WebView {}
 
 
+// constants from HUI.h
+// TODO: consider newtype definitions for cleaner api
+
+pub const WT_TOPLEVEL_SSD: u8 = 0;
+pub const WT_TOPLEVEL_CSD: u8 = 255; // -1 in C (uint8_t)
+pub const WT_DESKTOP_COMPONENT: u8 = 1;
+pub const WT_POPOVER: u8 = 2;
+
+pub const WL_BACKGROUND: u8 = 0;
+pub const WL_BOTTOM: u8 = 1;
+pub const WL_TOP: u8 = 2;
+pub const WL_OVERLAY: u8 = 3;
+pub const WL_TOPLEAST: u8 = 1;
+pub const WL_TOPMOST: u8 = 3;
+
+pub const WS_HIDDEN: i16 = 0b11000000;
+pub const WS_NOT_HIDDEN: i16 = 0b01000000;
+pub const WS_MINIMIZED: i16 = 0b00110000;
+pub const WS_NOT_MINIMIZED: i16 = 0b00010000;
+pub const WS_FULLSCREEN: i16 = 0b00001100;
+pub const WS_NOT_FULLSCREEN: i16 = 0b00000100;
+pub const WS_MAXIMIZED: i16 = 0b00000011;
+pub const WS_NOT_MAXIMIZED: i16 = 0b00000001;
+
+pub const WIM_ALWAYS: u8 = 0;
+pub const WIM_AUTO_WINDOW: u8 = 1;
+pub const WIM_NEVER: u8 = 2;
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct WindowGeometry {
+    pub state: i16,
+    pub monitor: i8,
+    pub width: i16,
+    pub height: i16,
+    pub left: i16,
+    pub top: i16,
+    pub right: i16,
+    pub bottom: i16,
+}
+
+impl Default for WindowGeometry {
+    fn default() -> Self {
+        Self { state: -1, monitor: -1, width: -1, height: -1, left: -1, top: -1, right: -1, bottom: -1 }
+    }
+}
+
 pub struct WindowControls {
     pointer: *mut c_void,
 }
@@ -243,27 +321,27 @@ impl WindowControls {
         Self { pointer }
     }
 
-    pub fn set_type(&self, window_type: u32) {
+    pub fn set_type(&self, window_type: u8) {
         unsafe { HUI_WindowControls_set_type(self.pointer, window_type) }
     }
 
-    pub fn get_type(&self) -> u32 {
+    pub fn get_type(&self) -> u8 {
         unsafe { HUI_WindowControls_get_type(self.pointer) }
     }
 
-    pub fn set_layer(&self, layer: u32) {
+    pub fn set_layer(&self, layer: u8) {
         unsafe { HUI_WindowControls_set_layer(self.pointer, layer) }
     }
 
-    pub fn get_layer(&self) -> u32 {
+    pub fn get_layer(&self) -> u8 {
         unsafe { HUI_WindowControls_get_layer(self.pointer) }
     }
 
-    pub fn set_geometry(&self, geometry: u32) {
+    pub fn set_geometry(&self, geometry: WindowGeometry) {
         unsafe { HUI_WindowControls_set_geometry(self.pointer, geometry) }
     }
 
-    pub fn get_geometry(&self) -> u32 {
+    pub fn get_geometry(&self) -> WindowGeometry {
         unsafe { HUI_WindowControls_get_geometry(self.pointer) }
     }
 
@@ -282,7 +360,14 @@ impl WindowControls {
 
     pub fn get_id(&self) -> String {
         let result = unsafe { HUI_WindowControls_get_id(self.pointer) };
-        unsafe { CStr::from_ptr(result).to_string_lossy().into_owned() }
+        if result.is_null() {
+            String::new()
+        }
+		else {
+			let string = unsafe { CStr::from_ptr(result).to_string_lossy().into_owned() };
+			unsafe { HUI_WindowControls_cstring_free(result); }
+			string
+		}
     }
 
     pub fn set_title(&self, title: &str) {
@@ -292,7 +377,14 @@ impl WindowControls {
 
     pub fn get_title(&self) -> String {
         let result = unsafe { HUI_WindowControls_get_title(self.pointer) };
-        unsafe { CStr::from_ptr(result).to_string_lossy().into_owned() }
+        if result.is_null() {
+            String::new()
+        }
+		else {
+			let string = unsafe { CStr::from_ptr(result).to_string_lossy().into_owned() };
+			unsafe { HUI_WindowControls_cstring_free(result); }
+			string
+		}
     }
 
     pub fn set_exclusive_zone(&self, zone: i16) {
@@ -310,6 +402,13 @@ impl WindowControls {
     pub fn get_focused(&self) -> bool {
         unsafe { HUI_WindowControls_get_focused(self.pointer) }
     }
+    pub fn set_input_mode_keyboard(&self, mode: u8) {
+        unsafe { HUI_WindowControls_set_input_mode_keyboard(self.pointer, mode) }
+    }
+
+    pub fn get_input_mode_keyboard(&self) -> u8 {
+        unsafe { HUI_WindowControls_get_input_mode_keyboard(self.pointer) }
+    }
 }
 
 impl Drop for WindowControls {
@@ -325,6 +424,7 @@ extern "C" {
     // WebView FFI
     fn HUI_WebView_create() -> *mut c_void;
     fn HUI_WebView_destroy(webview: *mut c_void);
+    fn HUI_WebView_cstring_free(cstr: *const c_char);
 	
     fn HUI_WebView_load_file(webview: *mut c_void, file: *const c_char);
     fn HUI_WebView_load_uri(webview: *mut c_void, uri: *const c_char);
@@ -355,15 +455,16 @@ extern "C" {
     // WindowControls FFI
     fn HUI_WindowControls_create(backend: *mut c_void, handle: *mut c_void) -> *mut c_void;
     fn HUI_WindowControls_destroy(controls: *mut c_void);
+    fn HUI_WindowControls_cstring_free(cstr: *const c_char);
 	
-    fn HUI_WindowControls_set_type(controls: *mut c_void, window_type: u32);
-    fn HUI_WindowControls_get_type(controls: *mut c_void) -> u32;
+    fn HUI_WindowControls_set_type(controls: *mut c_void, window_type: u8);
+    fn HUI_WindowControls_get_type(controls: *mut c_void) -> u8;
 	
-    fn HUI_WindowControls_set_layer(controls: *mut c_void, layer: u32);
-    fn HUI_WindowControls_get_layer(controls: *mut c_void) -> u32;
+    fn HUI_WindowControls_set_layer(controls: *mut c_void, layer: u8);
+    fn HUI_WindowControls_get_layer(controls: *mut c_void) -> u8;
 	
-    fn HUI_WindowControls_set_geometry(controls: *mut c_void, geometry: u32); // TODO: wrong argument type
-    fn HUI_WindowControls_get_geometry(controls: *mut c_void) -> u32; // TODO: wrong return type
+    fn HUI_WindowControls_set_geometry(controls: *mut c_void, geometry: WindowGeometry);
+    fn HUI_WindowControls_get_geometry(controls: *mut c_void) -> WindowGeometry;
 	
     fn HUI_WindowControls_set_opacity(controls: *mut c_void, opacity: u8);
     fn HUI_WindowControls_get_opacity(controls: *mut c_void) -> u8;
@@ -380,7 +481,8 @@ extern "C" {
     fn HUI_WindowControls_set_focused(controls: *mut c_void, activated: bool);
     fn HUI_WindowControls_get_focused(controls: *mut c_void) -> bool;
 	
-	// TODO: missing members + defined values missing + default values
+    fn HUI_WindowControls_set_input_mode_keyboard(controls: *mut c_void, mode: u8);
+    fn HUI_WindowControls_get_input_mode_keyboard(controls: *mut c_void) -> u8;
 
 }
 

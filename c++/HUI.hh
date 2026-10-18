@@ -463,10 +463,10 @@ const char* HUI_WindowControls_get_id (HUI_WindowControls object){
 	return cstr;
 }
 
-void        HUI_WindowControls_set_exclusive_zone (HUI_WindowControls object, uint16_t zone){
+void        HUI_WindowControls_set_exclusive_zone (HUI_WindowControls object, int16_t zone){
 	static_cast<HUI::WindowControls*>(object)->set_exclusive_zone(zone);
 }
-uint16_t    HUI_WindowControls_get_exclusive_zone (HUI_WindowControls object){
+int16_t    HUI_WindowControls_get_exclusive_zone (HUI_WindowControls object){
 	return static_cast<HUI::WindowControls*>(object)->get_exclusive_zone();
 }
 

@@ -228,12 +228,10 @@ HUI 'newnew' - attempt to reimplement HUI from beginning \
 <details><summary><h3> building </h3></summary>
 
 - [ ] single master build script for everything + make it possible to combine windowcontrols/webview/windowembeder in different languages at linkage time
-- [ ] debug control flag/rust --debug/release
-- [x] c, cpp, rust, python bindings in own directories
-- [ ] put backends in own directories + make it possible to build webview and controls separately
+- [ ] debug flag/build mode --debug/release
+- [ ] put backends in own directories
 - [ ] handle hui.js and hui.css as define/text replace (so we dont need quoting)
-- [ ] create master build script that calls others + build scripts directory + release naming ( HUI-{platform}-{backend}_{version or commit hash}_{more info} )
-- [x] ~~upgrade build scripts (error handling, bindings, packaging, colors) -> multibuild script calling the other scripts~~
+- [ ] include version/commit hash in build
 
 </details>
 
@@ -242,8 +240,7 @@ HUI 'newnew' - attempt to reimplement HUI from beginning \
 
 - [ ] js bindings: expose whole api to js (just set of callbacks from js)
 - [ ] native controls: windows / x11 / wayland (+ wayfire/wlr/kwin/... additions) 
-- [ ] rust http server (something between desktop app and web app) + url or browser in kiosk mode <https://superuser.com/questions/716426/running-latest-chrome-for-windows-in-kiosk-mode>
-- [ ] new backend: rust HTTP backend (something between desktop app and web app => "server mode" - app can run on headless server; prints out ui url / opens browser in kiosk mode ~ can work with with wrapper to get window id to control it) ~ multiuser: configurable action when user tries to connect existing instance (new app instance OR nothing; should be per app or per backend configurable?)
+- [ ] new backend: rust HTTP backend (something between desktop app and web app => "server mode" - app can run on headless server; prints out ui url / opens browser in kiosk mode ~ can work with with wrapper to get window id to control it) ~ multiuser: configurable action when user tries to connect existing instance (new app instance OR nothing; should be per app or per backend configurable?; <https://superuser.com/questions/716426/running-latest-chrome-for-windows-in-kiosk-mode>)
 - [ ] cef linux (rework current cef impl)
 - [ ] support MacOS - should work but untested + missing build scripts <https://ports.macports.org/port/webkit2-gtk/details/>
 - [ ] consider more backends, even proprietary <https://ultralig.ht> <https://docs.rs/sciter-rs/latest/sciter/> (sciter is probably not compatible with html5/css3)
@@ -254,13 +251,22 @@ HUI 'newnew' - attempt to reimplement HUI from beginning \
 </details>
 
 
-<details><summary><h3> js api </h3></summary>
+<details><summary><h3> api </h3></summary>
 
-- [ ] 'js_object'
+- [ ] 'js_object' / support js types (instead of just js code as string)
+- [ ] properly store/destroy native callbacks (currently the callbacks are just leaked)
+- [ ] return from native callback to js
 - [ ] use 'app://' custom protocol for loading files/content
-- [ ] more native and faster 'html_element'/js api
-- [ ] support js types (instead of just js code as string)
-- [ ] return from callback
+- [ ] get rid of private js and css (if possible and if safe) -- it should work as simple inject css/js as in browsers (limited to app:// protocol)
+- [ ] have option to run like regular webview -> rethink the automatic running of `hui_tweaks()` 
+- [ ] support drag and drop and copy/paste for text, files, images, application-specific (=allow real paths + predefined callbacks) -> define for events in call_native
+- [ ] callbacks for window close (on_closing vs. on_closed)
+- [ ] callbacks for window controls
+- [ ] reconsider window.show/realize
+- [ ] add concept of app - name, icon, ...  => app property: void set_taskbar_icon(icon, name) + app.add(HUI::Window)
+- [ ] threaded/multiprocess message loop (will need to figure out a way to return thread to c api) + thread-safety (the easiest solution seems to be creating optional thread safe wrapper running everything in external thread and handling the communication)
+- [ ] add universal window embedder (part of window controls)
+- [ ] overload WindowControls constructor in bindings to accept WebView and not only raw pointers
 
 </details>
 
@@ -273,35 +279,19 @@ HUI 'newnew' - attempt to reimplement HUI from beginning \
 </details>
 
 
-<details><summary><h3> api </h3></summary>
-
-- [ ] support drag and drop and copy/paste for text, files, images, application-specific (=allow real paths + predefined callbacks) -> define for events in call_native
-- [ ] callbacks for window close (on_closing vs. on_closed)
-- [ ] callbacks for window controls
-- [ ] reconsider window.show/realize
-- [ ] add concept of app - name, icon, ...  => app property: void set_taskbar_icon(icon, name) + app.add(HUI::Window)
-- [ ] threaded/multiprocess message loop (will need to figure out a way to return thread to c api) + thread-safety (the easiest solution seems to be creating optional thread safe wrapper running everything in external thread and handling the communication)
-- [ ] add universal window embedder (part of window controls)
-
-</details>
-
-
-<details><summary><h3> tweaks </h3></summary>
+<details><summary><h3> features </h3></summary>
 
 - [ ] support client-side decorations trough user styling/scripting  + select/get decoration scheme
 - [ ] auto update theme (not sure about the js) -- maybe it can be just autorefresh implemented in js for loading stylesheet from custom app:// protocol
-- [ ] get rid of private js and css (if possible and if safe) -- it should work as simple inject css/js as in browsers (limited to app:// protocol)
-- [ ] (BIG PLAN) allow dynamically changed themes per screen/app/schedule *.css (may be done trough external tool and storage unshare -> HUI wayfire tool ~ but how to multiwindow?) --- per screen themes (TODO: need to be able to have two themes aplied side by side when shown on more than one monitor ~ switch themes quickly and stop updating the other area of the window)
-- [ ] have option to run like regular webview -> rethink the automatic running of `hui_tweaks()` 
+- [ ] allow dynamically changed themes per screen/app/schedule *.css (may be done trough external tool and storage unshare -> HUI wayfire tool ~ but how to multiwindow?) --- per screen themes (TODO: need to be able to have two themes aplied side by side when shown on more than one monitor ~ switch themes quickly and stop updating the other area of the window)
 
 </details>
 
 
 <details><summary><h3> future </h3></summary>
  
-- [api] (BIG PLAN) upgrade API to serve as fully-featured and platform/renderer-agnostic base for building web browser (browser-beta)
+- [api] (BIG PLAN) upgrade API to serve as fully-featured and platform/renderer-agnostic base for building web browser (browser-beta) --  browser level api - tabs, flag settings, extensions api, inspector, sandbox, contexts/private mode/sessions management, zoom/right click menu/scrollbars/pip
 
-- [x] add back windows controls; controls can have dual handles - backend + handle - or there may be 2 types of controls (toolkit + os) == window handle X backend pointer X c api pointer
 - [ ] WindowEmbeder (?): fix: black space when resizing -> two options = black artifacts and instant resize OR little laggy resize but no artifacts; [window embeding (see win implementation and wayland notes in old readme)]
 - [ ] window controls: parent/child windows (see old readme); popup windows (likely just prepared regular window; positioning and window type is yet to be discussed especialy for wayland)
 - [ ] wayland controls: <https://wayland.app/protocols/xdg-shell>
@@ -318,12 +308,9 @@ HUI 'newnew' - attempt to reimplement HUI from beginning \
 
 - [ ] add popup (any popup ~ popups are not currently supported) that can exist outside the window (may be good idea to prepare the popup window)
 
-- [ ] research existing projects/ideas that can be used within this project
-
 - [ ] ? put sent2cpp_handlers into impl (if possible) or get rid of them; do: js calls cpp -> cpp calls one function that handles callbacks on the api/abi level === store native callbacks so that we can skip the C++ to C to C++ (maybe - seems to be complicated in respect to its benefits) -- will be likely better than the hell when converting the callbacks from one language to another
 - [ ] ? inheritance for backend implementations (and maybe namespaces for backends -> multi-backend); methods: call_native, call_js/call_js_async, html_element
-- [ ] ? controls: callbacks
-- [ ] browser level api - tabs, flag settings, extenition api, inspector, sandbox, contexts/private mode/sessions management, zoom/right click menu/scrollbars/pip, existing js apps support + html shebang
+- [ ] PWA runner + html shebang for apps
 
 </details>
 
@@ -335,10 +322,9 @@ HUI 'newnew' - attempt to reimplement HUI from beginning \
  
  
 #### BUGs:
- - [api] C++ api wrappers likely contain memory leaks (losing reference) + copy/move is not properly handled
+ - [api] C++ copy/move is not properly handled
  - [backend gtk3] WEBKIT_DISABLE_COMPOSITING_MODE=1 + the transparency became random (vbox + 3d disabled; 3d enabled is buggy); similar: <https://github.com/tauri-apps/tauri/issues/8254>
  - [backend gtk3] hover effect doesnt reset when mouse exits window at the same time as exiting window
- - [backend gtk3] window_handle returns pointer to wl_surface (better option should be considered ~ [XDG-foreign](https://wayland.app/protocols/xdg-foreign-unstable-v2#zxdg_imported_v2) if it will work for what we want)
  - [tests] test if call_js return works for multiple statements
  - [backend cef] calling destructor of webview causes crash instead of just closing the window
  - [backend cef] window doesnt close when it goes out of scope

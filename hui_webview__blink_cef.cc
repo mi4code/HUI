@@ -262,6 +262,7 @@ WebView::WebView () {
 }
 
 WebView::~WebView () {
+	call_js("window.close();"); // TODO: do the close properly with CEF API
 	cef_webviews--;
 	if (cef_webviews == 0) CefShutdown(); 
 }

@@ -45,17 +45,10 @@ MSVC_DLL void        HUI_WebView_load_uri (HUI_WebView object, const char* uri);
 MSVC_DLL void        HUI_WebView_load_str (HUI_WebView object, const char* str);
 MSVC_DLL void        HUI_WebView_hui_tweaks (HUI_WebView object);
 
-#ifdef __cplusplus // fixes C api, but not optimal
-  MSVC_DLL const char* HUI_WebView_call_js (HUI_WebView object, const char* code, bool return_data=false);
-  MSVC_DLL void        HUI_WebView_call_js_async (HUI_WebView object, const char* code, void(*return_callback)(const char*, void*), void* data=NULL); // TODO: cant do overloading
-  MSVC_DLL const char* HUI_WebView_call_native (HUI_WebView object, void(*handler)(char**,int,void*), void* data, const char* process_args="function(...args_array){return args_array}"); // TODO: return value | predefined process_args for click/dragndrop/default
-  MSVC_DLL const char* HUI_WebView_html_element (HUI_WebView object, const char* query, const char* property="", const char* value="");
-#else
-  MSVC_DLL const char* HUI_WebView_call_js (HUI_WebView object, const char* code, bool return_data/*=false*/);
-  MSVC_DLL void        HUI_WebView_call_js_async (HUI_WebView object, const char* code, void(*return_callback)(const char*, void*), void* data/*=NULL*/); // TODO: cant do overloading
-  MSVC_DLL const char* HUI_WebView_call_native (HUI_WebView object, void(*handler)(char**,int,void*), void* data, const char* process_args/*="function(...args_array){return args_array}"*/); // TODO: return value | predefined process_args for click/dragndrop/default
-  MSVC_DLL const char* HUI_WebView_html_element (HUI_WebView object, const char* query, const char* property/*=""*/, const char* value/*=""*/);
-#endif  
+MSVC_DLL const char* HUI_WebView_call_js (HUI_WebView object, const char* code, bool return_data/*=false*/);
+MSVC_DLL void        HUI_WebView_call_js_async (HUI_WebView object, const char* code, void(*return_callback)(const char*, void*), void* data/*=NULL*/); // TODO: cant do overloading
+MSVC_DLL const char* HUI_WebView_call_native (HUI_WebView object, void(*handler)(char**,int,void*), void* data, const char* process_args/*="function(...args_array){return args_array}"*/); // TODO: return value | predefined process_args for click/dragndrop/default
+MSVC_DLL const char* HUI_WebView_html_element (HUI_WebView object, const char* query, const char* property/*=""*/, const char* value/*=""*/);
 
 MSVC_DLL const char* HUI_WebView_backend_name (HUI_WebView object);
 MSVC_DLL void*       HUI_WebView_backend_object (HUI_WebView object);

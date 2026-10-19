@@ -113,7 +113,7 @@ impl WebView {
     }
 
     pub fn call_native<F>(&self, handler: F, process_args: Option<&str>) -> String where F: Fn(Vec<String>) + Send + Sync + 'static + Clone, {  // TODO: find better way to implement default arguments
-        let process_args_cstr = CString::new(process_args.unwrap_or("function(...args_array) { return args_array; }")).expect("CString::new failed");
+        let process_args_cstr = CString::new(process_args.unwrap_or("function(...args_array){return args_array}")).expect("CString::new failed");
 
 		// store handler in data ptr
 		let closure: Box<dyn Fn(Vec<String>)> = Box::new(handler.clone());  // box the closure

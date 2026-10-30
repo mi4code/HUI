@@ -98,7 +98,7 @@ WebView::WebView () {
 }
 
 WebView::~WebView () {
-	gdk_window_destroy (gtk_widget_get_window(impl->window));
+	gtk_widget_destroy(impl->window);
 }
 
 

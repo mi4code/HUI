@@ -32,7 +32,7 @@ struct WindowControls::pImpl {
 		*window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 		
 		// destroy old window
-		gdk_window_destroy (gtk_widget_get_window(old));
+		gtk_widget_destroy(old);
 		
 		// add
 		gtk_container_add(GTK_CONTAINER(*window), GTK_WIDGET( w ));
@@ -60,7 +60,7 @@ struct WindowControls::pImpl {
 		*window = gtk_window_new(GTK_WINDOW_POPUP);
 		
 		// destroy old window
-		gdk_window_destroy (gtk_widget_get_window(old));
+		gtk_widget_destroy(old);
 		
 		// add
 		gtk_container_add(GTK_CONTAINER(*window), GTK_WIDGET( w ));

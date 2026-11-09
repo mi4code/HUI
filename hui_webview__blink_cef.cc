@@ -12,6 +12,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <string_view>
 #include <list>
 #include <sstream>
 #include <algorithm>
@@ -241,7 +242,7 @@ bool rr = false;
 	
 	__attribute__((constructor)) static void cef_linux_run_subprocess() {
 		char** end = cef_linux_argv + cef_linux_argc;
-		if (std::find(cef_linux_argv, end, "--hui-is-cef-subprocess") == end) return; // not one of cef children
+		if (std::find(cef_linux_argv, end, std::string_view("--hui-is-cef-subprocess")) == end) return; // not one of cef children
 		const int code = CefExecuteProcess(CefMainArgs(cef_linux_argc, cef_linux_argv), new App_cef(), nullptr);
 		if (code >= 0) _exit(code);
 	}

@@ -31,8 +31,21 @@ add_subdirectory(${CEF_ROOT} libcef_dll_wrapper)
 # Link to CEF libraries
 target_link_libraries(libHUI libcef_dll_wrapper)
 #  we are at hui/build/build (cd must have happened somewhere before)
-target_link_libraries(libHUI ../_build_cache_cef_binary/Release/libcef)
-#target_link_libraries(libHUI ../_build_cache_cef_binary/Release/libcef.lib)
+
+# linux: libcef.so looks up libc functions (close, localtime_r, getaddrinfo, ...) with dlsym(RTLD_NEXT), which fails when libcef is loaded after libc, so a tiny shim lib forwards those names to libc. It must be a DT_NEEDED of libHUI listed after libcef.so (link order), kept by --no-as-needed, and needs an explicit soname so libHUI records the plain name and finds it next to itself via $ORIGIN (not a build-machine path).
+if(UNIX)
+    add_library(cef_shim_linux SHARED ../cef_shim_linux.cc)
+    set_target_properties(cef_shim_linux PROPERTIES PREFIX "" OUTPUT_NAME "cef_shim_linux" LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+    target_link_libraries(cef_shim_linux PRIVATE ${CMAKE_DL_LIBS})
+    target_link_options(cef_shim_linux PRIVATE -Wl,-soname,cef_shim_linux.so)
+    target_link_libraries(libHUI ${CMAKE_CURRENT_SOURCE_DIR}/_build_cache_cef_binary/Release/libcef.so)
+    target_link_libraries(libHUI cef_shim_linux)
+    target_link_options(libHUI PRIVATE -Wl,--no-as-needed)
+endif()
+if(WIN32)
+	target_link_libraries(libHUI ../_build_cache_cef_binary/Release/libcef)
+	#target_link_libraries(libHUI ../_build_cache_cef_binary/Release/libcef.lib)
+endif()
 
 # Use static runtime (MT) for all builds -- TODO: is this needed?
 foreach(flag_var
@@ -52,8 +65,15 @@ include_directories(../c++)
 include_directories(${CEF_ROOT}/include)
 include_directories(${CEF_ROOT})
 
-# Platform-specific settings
+# Platform-specific settings (windows)
 if(WIN32)
     add_definitions(-D_WINDOWS)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")
+endif()
+
+# Platform-specific settings (linux)
+if(UNIX)
+    set_target_properties(libHUI PROPERTIES OUTPUT_NAME "HUI")
+    set_target_properties(libHUI PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+    set_target_properties(libHUI PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE INSTALL_RPATH "$ORIGIN")
 endif()

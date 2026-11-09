@@ -11,10 +11,18 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <windows.h>
 #include <string>
 #include <list>
 #include <sstream>
+
+#if defined(_WIN32)
+  #include <windows.h>
+#else
+  #include <unistd.h>
+  #include <cstdio>
+  #include <cstdlib>
+  #include <cstring>
+#endif
 
 #include "include/cef_command_line.h"
 //#include "include/cef_sandbox_win.h"  // not using sandbox to save memory
@@ -165,10 +173,18 @@ class App_cef : public CefApp, public CefBrowserProcessHandler, public CefRender
 	
 	void OnContextInitialized() override {}
 	
+	void OnBeforeChildProcessLaunch(CefRefPtr<CefCommandLine> command_line) override {
+		command_line->AppendSwitch("hui-is-cef-subprocess");
+	}
+	
 	void OnBeforeCommandLineProcessing(const CefString& process_type, CefRefPtr<CefCommandLine> command_line) override { // run in single process - workaround for call_native (wont work without that because vector is appended and read in different processes causing it to not work) + may help when built as dll
         command_line->AppendSwitch("single-process");  // enable single-process mode
         command_line->AppendSwitch("no-sandbox");  // disable sandbox
-		command_line->AppendSwitch( std::string()+"cache-path=.\\cache_"+ std::to_string(reinterpret_cast<uintptr_t>(GetModuleHandle(NULL))) ); // TODO: ensure this really works OR better use system temporary dir (this may be potentionally cause of "Opening in existing browser session." <https://cef-builds.spotifycdn.com/docs/130.1/classCefBrowserProcessHandler.html#a052a91639483467c0b546d57a05c2f06>)
+		#if defined(_WIN32)
+			command_line->AppendSwitch( std::string()+"cache-path=.\\cache_"+ std::to_string(reinterpret_cast<uintptr_t>(GetModuleHandle(NULL))) ); // TODO: ensure this really works OR better use system temporary dir (this may be potentionally cause of "Opening in existing browser session." <https://cef-builds.spotifycdn.com/docs/130.1/classCefBrowserProcessHandler.html#a052a91639483467c0b546d57a05c2f06>)
+		#else
+			command_line->AppendSwitch( std::string()+"cache-path=./cache_"+ std::to_string(static_cast<uintptr_t>(getpid())) ); // unique per process, same intent as the hinstance trick on windows
+        #endif
 		command_line->AppendSwitch("disable-gpu-compositing"); // TODO: fix and allow gpu
 		command_line->AppendSwitch("transparent-painting-enabled"); // enables transparency TODO: fix it -> <https://chatgpt.com/share/67c79507-9334-8006-a775-89e75340aa2e>
     }
@@ -191,6 +207,46 @@ bool ret = true;
 std::string ret_data = "#";
 bool rr = false;
 
+#if !defined(_WIN32)
+	
+	static int    cef_linux_argc = 0;
+	static char** cef_linux_argv = nullptr;
+
+	// we need to capture argv to be immune to setproctitle-style rewrites of argv
+	// glibc unlike other libc's passes (argc, argv, envp) to constructors, for others we fallback to reading cmdline (which may not work on some systems)
+	#ifdef __GLIBC__
+		__attribute__((constructor(101))) static void cef_linux_capture_args(int argc, char** argv, char**) {
+			cef_linux_argc = argc;
+			cef_linux_argv = new char*[argc + 1]; // leaked on purpose - cef points into it for the whole run
+			for (int i = 0; i < argc; i++) cef_linux_argv[i] = strdup(argv[i]);
+			cef_linux_argv[argc] = nullptr;
+		}
+	#else
+		static void cef_linux_read_cmdline() {
+			if (cef_linux_argv) return;
+			
+			std::ifstream f("/proc/self/cmdline", std::ios::binary);
+			auto* raw  = new std::string((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());  // leaked on purpose - cef points into it for the whole run
+			auto* ptrs = new std::vector<char*>;
+			for (size_t pos = 0; pos < raw->size(); pos += std::strlen(raw->c_str() + pos) + 1) ptrs->push_back(raw->data() + pos);
+			ptrs->push_back(nullptr);
+			cef_linux_argc = static_cast<int>(ptrs->size()) - 1;
+			cef_linux_argv = ptrs->data();
+		}
+		__attribute__((constructor(101))) static void cef_linux_capture_args() {
+			cef_linux_read_cmdline();
+		}
+	#endif
+	
+	__attribute__((constructor)) static void cef_linux_run_subprocess() {
+		char** end = cef_linux_argv + cef_linux_argc;
+		if (std::find(cef_linux_argv, end, "--hui-is-cef-subprocess") == end) return; // not one of cef children
+		const int code = CefExecuteProcess(CefMainArgs(cef_linux_argc, cef_linux_argv), new App_cef(), nullptr);
+		if (code >= 0) _exit(code);
+	}
+
+#endif
+
 int cef_init(){
 
 	int exit_code;
@@ -207,10 +263,12 @@ int cef_init(){
 	CefScopedSandboxInfo scoped_sandbox;
 	sandbox_info = scoped_sandbox.sandbox_info();
   #endif*/
-
-	HINSTANCE hInstance = GetModuleHandle(NULL);
-	CefMainArgs main_args(hInstance);
-    //CefMainArgs main_args(argc, argv); // TODO: linux
+	#if defined(_WIN32)
+		HINSTANCE hInstance = GetModuleHandle(NULL);
+		CefMainArgs main_args(hInstance);
+	#else
+        CefMainArgs main_args(cef_linux_argc, cef_linux_argv); // real argv, so that cef recognises its subprocesses
+	#endif
 	
 	CefSettings settings;
 	//settings.single_process = true; // discontinued
@@ -223,7 +281,13 @@ int cef_init(){
 	CefRefPtr<App_cef> app = new App_cef();  // TODO: shouldnt be global?
 	
 	exit_code = CefExecuteProcess(main_args, app, nullptr);
-    if (exit_code >= 0) return exit_code;
+    if (exit_code >= 0) {
+		#if defined(_WIN32)
+			return exit_code;
+        #else
+			_exit(exit_code); // this is a cef subprocess; cef_init() runs from the WebView constructor, so terminate instead of returning
+        #endif
+}
 	
 	CefInitialize(main_args, settings, app, nullptr);
 	
@@ -416,14 +480,18 @@ void* WebView::backend_object (){
 std::string WebView::window_type (){
 	#if defined(_WIN32) // windows
 	  return "windows";
-	#else // TODO: whatever
-	  return "unknown";
+	#else // TODO: wayland
+	  return "x11";
 	#endif
 }
 
 void* WebView::window_handle (){
-	return impl->browser->GetHost()->GetWindowHandle();
-	//return window->GetWindowHandle(); // Windows HWND = PVOID = void* = pointer (https://learn.microsoft.com/en-us/windows/win32/winprog/windows-data-types)
+	#if defined(_WIN32)
+		return impl->browser->GetHost()->GetWindowHandle();
+		//return window->GetWindowHandle(); // Windows HWND = PVOID = void* = pointer (https://learn.microsoft.com/en-us/windows/win32/winprog/windows-data-types)
+	#else
+		return reinterpret_cast<void*>(impl->browser->GetHost()->GetWindowHandle());
+	#endif
 }
 
  

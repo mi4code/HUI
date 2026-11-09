@@ -14,6 +14,7 @@
 #include <string>
 #include <list>
 #include <sstream>
+#include <algorithm>
 
 #if defined(_WIN32)
   #include <windows.h>

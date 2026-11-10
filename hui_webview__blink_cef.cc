@@ -482,8 +482,8 @@ void* WebView::backend_object (){
 std::string WebView::window_type (){
 	#if defined(_WIN32) // windows
 	  return "windows";
-	#else // TODO: wayland
-	  return "x11";
+	#else // linux
+	  return cef_get_xdisplay() ? "x11" : "wayland";
 	#endif
 }
 
@@ -492,7 +492,8 @@ void* WebView::window_handle (){
 		return impl->browser->GetHost()->GetWindowHandle();
 		//return window->GetWindowHandle(); // Windows HWND = PVOID = void* = pointer (https://learn.microsoft.com/en-us/windows/win32/winprog/windows-data-types)
 	#else
-		return reinterpret_cast<void*>(impl->browser->GetHost()->GetWindowHandle());
+		if (cef_get_xdisplay() == nullptr) return nullptr; // TODO: obtaining wayland objects is not possible with current CEF version
+		return reinterpret_cast<void*>(impl->browser->GetHost()->GetWindowHandle()); // x11
 	#endif
 }
 

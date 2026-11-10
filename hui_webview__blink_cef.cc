@@ -294,7 +294,8 @@ int cef_init(){
 	CefInitialize(main_args, settings, app, nullptr);
 	
 	// now, we can create windows
-	
+
+	return 0;
 }
 
 

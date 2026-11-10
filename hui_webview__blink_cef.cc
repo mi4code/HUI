@@ -187,7 +187,6 @@ class App_cef : public CefApp, public CefBrowserProcessHandler, public CefRender
 		#else
 			command_line->AppendSwitch( std::string()+"cache-path=./cache_"+ std::to_string(static_cast<uintptr_t>(getpid())) ); // unique per process, same intent as the hinstance trick on windows
         #endif
-		command_line->AppendSwitch("disable-gpu-compositing"); // TODO: fix and allow gpu
 		command_line->AppendSwitch("transparent-painting-enabled"); // enables transparency TODO: fix it -> <https://chatgpt.com/share/67c79507-9334-8006-a775-89e75340aa2e>
     }
 	
